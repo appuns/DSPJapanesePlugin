@@ -202,8 +202,8 @@ namespace DSPJapanesePlugin
             else
             {
                 LogManager.Logger.LogInfo("辞書をダウンロードしました");
-                var strings = request.downloadHandler.text;
-                JPDictionary = JSON.FromJson<Dictionary<string, string>>(strings.Replace("[LF]", @"\n").Replace("[CRLF]", @"\r\n").Replace("\n", "\\\n"));
+                var strings = request.downloadHandler.text.Replace("[LF]", @"\n").Replace("[CRLF]", @"\r\n");
+                JPDictionary = JSON.FromJson<Dictionary<string, string>>(strings);
                 File.WriteAllText(dstPath, strings);
 
             }
@@ -416,22 +416,43 @@ namespace DSPJapanesePlugin
 
 
 
+        //アイテムチップの増産剤効果表示の調整
+        [HarmonyPatch(typeof(UIItemTip), "SetTip")]
+        public static class UIItemTip_SetTip_PostPatch
+        {
+            [HarmonyPostfix]
+            public static void Postfix(UIItemTip __instance)
+            {
+                if (EnableFixUI.Value)
+                {
+                    GameObject incEffectName1 = __instance.transform.Find("inc-effect-name-1").gameObject;
+                    incEffectName1.transform.localPosition = new Vector3(25f, incEffectName1.transform.localPosition.y, 0f);
+                    GameObject incEffectName2 = incEffectName1.transform.Find("inc-effect-name-2").gameObject;
+                    incEffectName2.transform.localPosition = new Vector3(153f, 0f, 0f);
+                    GameObject incEffectName3 = incEffectName1.transform.Find("inc-effect-name-3").gameObject;
+                    incEffectName3.transform.localPosition = new Vector3(253f, 0f, 0f);
+                    incEffectName3.transform.localScale = new Vector3(0.8f, 1f, 1f);
+                    incEffectName3.GetComponent<RectTransform>().sizeDelta = new Vector2(110f, 16f);
+                }
+            }
+        }
+
         //メカエディタ表示の調整
         [HarmonyPatch(typeof(UIMechaEditor), "_OnInit")]
         public static class UIMechaEditorl_OnInit_PostPatch
         {
             [HarmonyPostfix]
-            public static void Postfix()
+            public static void Postfix(UIMechaEditor __instance)
             {
                 if (EnableFixUI.Value)
                 {
-                    GameObject Text1 = GameObject.Find("UI Root/Overlay Canvas/Mecha Editor UI/Left Panel/scroll-view/Viewport/Left Panel Content/part-group/disable-all-button/Text");
+                    GameObject Text1 = __instance.transform.Find("Left Panel/scroll-view/Viewport/Left Panel Content/part-group/disable-all-button/Text").gameObject;
                     Text1.transform.localScale = new Vector3(0.7f, 1f, 1f);
-                    GameObject Text2 = GameObject.Find("UI Root/Overlay Canvas/Mecha Editor UI/Left Panel/scroll-view/Viewport/Left Panel Content/part-group/enable-all-button/Text");
+                    GameObject Text2 = __instance.transform.Find("Left Panel/scroll-view/Viewport/Left Panel Content/part-group/enable-all-button/Text").gameObject;
                     Text2.transform.localScale = new Vector3(0.7f, 1f, 1f);
-                    GameObject Text3 = GameObject.Find("UI Root/Overlay Canvas/Mecha Editor UI/Left Panel/scroll-view/Viewport/Left Panel Content/bone-group/disable-all-button/Text");
+                    GameObject Text3 = __instance.transform.Find("Left Panel/scroll-view/Viewport/Left Panel Content/bone-group/disable-all-button/Text").gameObject;
                     Text3.transform.localScale = new Vector3(0.7f, 1f, 1f);
-                    GameObject Text4 = GameObject.Find("UI Root/Overlay Canvas/Mecha Editor UI/Left Panel/scroll-view/Viewport/Left Panel Content/bone-group/enable-all-button/Text");
+                    GameObject Text4 = __instance.transform.Find("Left Panel/scroll-view/Viewport/Left Panel Content/bone-group/enable-all-button/Text").gameObject;
                     Text4.transform.localScale = new Vector3(0.7f, 1f, 1f);
                 }
             }
@@ -439,36 +460,50 @@ namespace DSPJapanesePlugin
 
 
 
-        //ダイソンスフィアエディタ表示の調整
+        //ダイソンスフィアエディタ表示の調整１
         [HarmonyPatch(typeof(UIDESwarmPanel), "_OnInit")]
         public static class UIDESwarmPanel_OnInit_PostPatch
         {
             [HarmonyPostfix]
-            public static void Postfix()
+            public static void Postfix(UIDESwarmPanel __instance)
             {
                 if (EnableFixUI.Value)
                 {
-                    GameObject inEditorText1 = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/hierarchy/swarm/display-group/display-toggle-1/checkbox-editor/in-editor-text");
+                    GameObject inEditorText1 = __instance.transform.Find("display-group/display-toggle-1/checkbox-editor/in-editor-text").gameObject;
                     inEditorText1.transform.localPosition = new Vector3(35f, 0f, 0f);
                     inEditorText1.transform.localScale = new Vector3(0.7f, 1f, 1f);
-                    GameObject inGameText1 = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/hierarchy/swarm/display-group/display-toggle-1/checkbox-game/in-game-text");
+                    GameObject inGameText1 = __instance.transform.Find("display-group/display-toggle-1/checkbox-game/in-game-text").gameObject;
                     inGameText1.transform.localPosition = new Vector3(33f, 0f, 0f);
                     inGameText1.transform.localScale = new Vector3(0.8f, 1f, 1f);
-                    GameObject displayText = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/hierarchy/swarm/display-group/display-toggle-2/display-text");
+                    GameObject displayText = __instance.transform.Find("display-group/display-toggle-2/display-text").gameObject;
                     displayText.transform.localScale = new Vector3(0.66f, 1f, 1f);
-                    GameObject inEditorText2 = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/hierarchy/swarm/display-group/display-toggle-2/checkbox-editor/in-editor-text");
+                    GameObject inEditorText2 = __instance.transform.Find("display-group/display-toggle-2/checkbox-editor/in-editor-text").gameObject;
                     inEditorText2.transform.localPosition = new Vector3(35f, 0f, 0f);
                     inEditorText2.transform.localScale = new Vector3(0.7f, 1f, 1f);
-                    GameObject inGameText2 = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/hierarchy/swarm/display-group/display-toggle-2/checkbox-game/in-game-text");
+                    GameObject inGameText2 = __instance.transform.Find("display-group/display-toggle-2/checkbox-game/in-game-text").gameObject;
                     inGameText2.transform.localPosition = new Vector3(33f, 0f, 0f);
                     inGameText2.transform.localScale = new Vector3(0.8f, 1f, 1f);
-                    GameObject inEditorText3 = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/hierarchy/layers/display-group/display-toggle-1/checkbox-editor/in-editor-text");
+                }
+            }
+        }
+
+        //ダイソンスフィアエディタ表示の調整２
+        [HarmonyPatch(typeof(UIDELayerPanel), "_OnInit")]
+        public static class UIDELayerPanel_OnInit_PostPatch
+        {
+            [HarmonyPostfix]
+            public static void Postfix(UIDELayerPanel __instance)
+            {
+                if (EnableFixUI.Value)
+                {
+                    GameObject inEditorText3 = __instance.transform.Find("display-group/display-toggle-1/checkbox-editor/in-editor-text").gameObject;
                     inEditorText3.transform.localScale = new Vector3(0.7f, 1f, 1f);
-                    GameObject inEditorText4 = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Dyson Sphere Editor/Dyson Editor Control Panel/hierarchy/layers/display-group/display-toggle-2/checkbox-editor/in-editor-text");
+                    GameObject inEditorText4 = __instance.transform.Find("display-group/display-toggle-2/checkbox-editor/in-editor-text").gameObject;
                     inEditorText4.transform.localScale = new Vector3(0.7f, 1f, 1f);
                 }
             }
         }
+
 
 
         //組み立て機等のアラームボタンの調整
@@ -539,20 +574,34 @@ namespace DSPJapanesePlugin
                 }
             }
         }
-        //ブループリント保存画面のUI修正
+        //ブループリント保存画面のUI修正１
         [HarmonyPatch(typeof(UIBlueprintBrowser), "_OnOpen")]
-        public static class UIBlueprintInspector__OnOpen_Harmony
+        public static class UIBlueprintBrowser_OnOpen_Harmony
         {
             [HarmonyPostfix]
-            public static void Postfix()
+            public static void Postfix(UIBlueprintBrowser __instance)
             {
                 if (EnableFixUI.Value)
                 {
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser/inspector-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser/inspector-group/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser/folder-info-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Copy Mode/Blueprint Copy Inspector/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Copy Mode/Blueprint Copy Inspector/group-1/save-state-text").transform.localPosition = new Vector3(80, -30, 0);
+
+                    __instance.transform.Find("inspector-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
+                    __instance.transform.Find("inspector-group/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
+                    __instance.transform.Find("folder-info-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
+                }
+            }
+        }
+        //ブループリント保存画面のUI修正１
+        [HarmonyPatch(typeof(UIBlueprintInspector), "_OnOpen")]
+        public static class UIBlueprintInspector_OnOpen_Harmony
+        {
+            [HarmonyPostfix]
+            public static void Postfix(UIBlueprintInspector __instance)
+            {
+                if (EnableFixUI.Value)
+                {
+
+                    __instance.transform.Find("group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
+                    __instance.transform.Find("group-1/save-state-text").transform.localPosition = new Vector3(80, -30, 0);
                 }
             }
         }
@@ -562,21 +611,21 @@ namespace DSPJapanesePlugin
         public static class UIMonitorWindow_OnInit_PostPatch
         {
             [HarmonyPostfix]
-            public static void Postfix()
+            public static void Postfix(UIMonitorWindow __instance)
             {
                 if (EnableFixUI.Value)
                 {
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Monitor Window/speaker-panel/volume/label").transform.localScale = new Vector3(0.8f, 1, 1);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Monitor Window/alarm-settings/system-mode/system-label").transform.localScale = new Vector3(0.7f, 1, 1);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Monitor Window/alarm-settings/system-mode/system-label").GetComponent<RectTransform>().sizeDelta = new Vector2(120, 30);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Monitor Window/alarm-settings/system-mode/system-mode-box/Main Button").GetComponent<RectTransform>().sizeDelta = new Vector2(10, 0);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Monitor Window/alarm-settings/speaker-mode/speaker-label").transform.localScale = new Vector3(0.7f, 1, 1);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Monitor Window/alarm-settings/speaker-mode/speaker-label").GetComponent<RectTransform>().sizeDelta = new Vector2(120, 30);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Monitor Window/alarm-settings/speaker-mode/speaker-mode-box/Main Button").GetComponent<RectTransform>().sizeDelta = new Vector2(10, 0);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Monitor Window/alarm-settings/signal/icon-tag-label").transform.localScale = new Vector3(0.7f, 1, 1);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Monitor Window/alarm-settings/signal/icon-tag-label").GetComponent<RectTransform>().sizeDelta = new Vector2(120, 24);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Monitor Window/monitor-settings/cargo-filter/icon-tag-label").transform.localScale = new Vector3(0.7f, 1, 1);
-                    GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Monitor Window/monitor-settings/cargo-filter/icon-tag-label").GetComponent<RectTransform>().sizeDelta = new Vector2(120, 24);
+                    __instance.transform.Find("speaker-panel/volume/label").transform.localScale = new Vector3(0.8f, 1, 1);
+                    __instance.transform.Find("alarm-settings/system-mode/system-label").transform.localScale = new Vector3(0.7f, 1, 1);
+                    __instance.transform.Find("alarm-settings/system-mode/system-label").GetComponent<RectTransform>().sizeDelta = new Vector2(120, 30);
+                    __instance.transform.Find("alarm-settings/system-mode/system-mode-box/Main Button").GetComponent<RectTransform>().sizeDelta = new Vector2(10, 0);
+                    __instance.transform.Find("alarm-settings/speaker-mode/speaker-label").transform.localScale = new Vector3(0.7f, 1, 1);
+                    __instance.transform.Find("alarm-settings/speaker-mode/speaker-label").GetComponent<RectTransform>().sizeDelta = new Vector2(120, 30);
+                    __instance.transform.Find("alarm-settings/speaker-mode/speaker-mode-box/Main Button").GetComponent<RectTransform>().sizeDelta = new Vector2(10, 0);
+                    __instance.transform.Find("alarm-settings/signal/icon-tag-label").transform.localScale = new Vector3(0.7f, 1, 1);
+                    __instance.transform.Find("alarm-settings/signal/icon-tag-label").GetComponent<RectTransform>().sizeDelta = new Vector2(120, 24);
+                    __instance.transform.Find("monitor-settings/cargo-filter/icon-tag-label").transform.localScale = new Vector3(0.7f, 1, 1);
+                    __instance.transform.Find("monitor-settings/cargo-filter/icon-tag-label").GetComponent<RectTransform>().sizeDelta = new Vector2(120, 24);
                 }
             }
         }
@@ -653,20 +702,20 @@ namespace DSPJapanesePlugin
         static class UpdateUIDisplayPatch
         {
             [HarmonyPostfix]
-            static void Postfix()
+            static void Postfix(UIGalaxySelect __instance)
             {
                 if (EnableFixUI.Value)
                 {
-                    GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/m-star").GetComponent<Text>().text = "　　　　　　　" + "M型恒星".Translate();
-                    GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/k-star").GetComponent<Text>().text = "　　　　　　　" + "K型恒星".Translate();
-                    GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/g-star").GetComponent<Text>().text = "　　　　　　　" + "G型恒星".Translate();
-                    GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/f-star").GetComponent<Text>().text = "　　　　　　　" + "A型恒星".Translate();
-                    GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/a-star").GetComponent<Text>().text = "　　　　　　　" + "B型恒星".Translate();
-                    GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/b-star").GetComponent<Text>().text = "　　　　　　　" + "O型恒星".Translate();
-                    GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/o-star").GetComponent<Text>().text = "　　　　　　　" + "M型恒星".Translate();
-                    GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/n-star").GetComponent<Text>().text = "　　　　　　　" + "空格中子星".Translate();
-                    GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/wd-star").GetComponent<Text>().text = "　　　　　　　" + "空格白矮星".Translate();
-                    GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/bh-star").GetComponent<Text>().text = "　　　　　　　" + "空格黑洞".Translate();
+                    __instance.transform.Find("right-group/m-star").GetComponent<Text>().text = "　　　　　　　" + "M型恒星".Translate();
+                    __instance.transform.Find("right-group/k-star").GetComponent<Text>().text = "　　　　　　　" + "K型恒星".Translate();
+                    __instance.transform.Find("right-group/g-star").GetComponent<Text>().text = "　　　　　　　" + "G型恒星".Translate();
+                    __instance.transform.Find("right-group/f-star").GetComponent<Text>().text = "　　　　　　　" + "A型恒星".Translate();
+                    __instance.transform.Find("right-group/a-star").GetComponent<Text>().text = "　　　　　　　" + "B型恒星".Translate();
+                    __instance.transform.Find("right-group/b-star").GetComponent<Text>().text = "　　　　　　　" + "O型恒星".Translate();
+                    __instance.transform.Find("right-group/o-star").GetComponent<Text>().text = "　　　　　　　" + "M型恒星".Translate();
+                    __instance.transform.Find("right-group/n-star").GetComponent<Text>().text = "　　　　　　　" + "空格中子星".Translate();
+                    __instance.transform.Find("right-group/wd-star").GetComponent<Text>().text = "　　　　　　　" + "空格白矮星".Translate();
+                    __instance.transform.Find("right-group/bh-star").GetComponent<Text>().text = "　　　　　　　" + "空格黑洞".Translate();
                 }
             }
         }
