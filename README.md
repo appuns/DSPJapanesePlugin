@@ -1,5 +1,5 @@
 # ダイソンスフィアプログラム日本語化プラグイン　
-ダイソンスフィアプログラムを日本語化し、フォントも変更します。初回起動時にオプションから日本語を選んでください。<br>
+ダイソンスフィアプログラムを日本語化し、フォントも変更します。<br>
 This plugin change all strings to Japanese and change fonts.<br>
 
 ## 機能
@@ -8,13 +8,18 @@ This plugin change all strings to Japanese and change fonts.<br>
 - 翻訳用の辞書は起動時に自動でダウンロードされます。<br>
 - 辞書に単語が追加されている場合は、他のMODのアイテムや技術の名前、説明文も翻訳されます。<br>
 
+
 ## インストールの方法（MODマネージャ「r2modman」を使うと簡単です）　
-1.BepInExをインストールしてください。<br>
-2.`steamapps/common/Dyson Sphere Program/BepInEx/plugins/`内に`DSPJapanesePlugin`フォルダを作成してください。<br>
-3.ダウンロード後解凍してできたファイルを2で作った`DSPJapanesePlugin`フォルダに配置してください。<br>
+1. BepInExをインストールしてください。<br>
+2. `steamapps/common/Dyson Sphere Program/BepInEx/plugins/`内に`DSPJapanesePlugin`フォルダを作成してください。<br>
+3. ダウンロード後解凍してできたファイルを2で作った`DSPJapanesePlugin`フォルダに配置してください。<br>
 　　　必要なファイル<br>
 　　　DSPJapanesePlugin.dll<br>
-　　　　※ファイル数が減りました。<br>
+
+## 日本語の設定方法
+1. ゲーム起動時にメインメニューのsettingsのMiscellaneousタブのLanguageで日本語を選んでください。<br>
+2. ゲームを再起動すると、完全に日本語化されます。<br>
+※インストール後、初めて起動する場合は、最初に言語選択画面が出ますので、日本語を選ぶだけです。<br>
 
 ## フォントについて
 本プラグインに含まれるフォントは「M+フォント」の幅を１５％狭くした上にプロポーショナル化し、英数字を「Saira」に置き換えたものです。<br>
@@ -29,6 +34,11 @@ https://docs.google.com/spreadsheets/d/1U9Y3iV7pfYGvlsl_tjvxX5mN0L_YrLlxdnCNnpMA
 で行っております。ご協力をお願いします。<br>
 
 ## 更新履歴
+### v1.1.6
+- 新規ゲーム画面の星のスペクトル型名が間違っていた問題を解決しました。
+- MOD「BlueprintTweaks」と同時に使う場合に生じるエラーを解決しました。
+- メカカスタム画面のUIの表示を修正しました。
+- 初回起動時の言語選択画面で「日本語」を選択できるようにしました。
 ### v1.1.5
 - γ線レシーバーのUIの問題に対応しました。
 ### v1.1.4

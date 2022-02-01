@@ -46,6 +46,7 @@ namespace DSPJapanesePlugin
         public static ConfigEntry<bool> EnableAutoUpdate;
         public static ConfigEntry<bool> ImportSheet;
         public static ConfigEntry<bool> exportNewStrings;
+        //public static ConfigEntry<bool> firstBoot;
         public static ConfigEntry<string> DictionaryGAS;
         public static ConfigEntry<string> SsheetGAS;
 
@@ -71,6 +72,7 @@ namespace DSPJapanesePlugin
             DictionaryGAS = Config.Bind("翻訳者、開発者向けの設定：基本的に変更しないでください。", "DictionaryGAS", "https://script.google.com/macros/s/AKfycbwRjiRA6PUeh02MOQ6ccWfbhkQ3wW_qxM6MEl_UXcltGHnU59GLhIOcNNoM35NS7N7_/exec", "日本語辞書ファイル取得のスクリプトアドレス");
             SsheetGAS = Config.Bind("翻訳者、開発者向けの設定：基本的に変更しないでください。", "SsheetGAS", "https://script.google.com/macros/s/AKfycbxOATSa3MHENWQfWc8Ti6XLK-yx-HjzvoLMnO7S2u2nKuZYrRrD3Luh2NLA6jehgf1RUQ/exec", "翻訳作業所のシート取得のスクリプトアドレス");
             exportNewStrings = Config.Bind("翻訳者、開発者向けの設定：基本的に変更しないでください。", "exportNewStrings", false, "バージョンアップ時に新規文字列を翻訳作業所用に書き出すかどうか。");
+            exportNewStrings = Config.Bind("MODno", "exportNewStrings", false, "バージョンアップ時に新規文字列を翻訳作業所用に書き出すかどうか。");
 
             //辞書ファイルのダウンロード
             if (EnableAutoUpdate.Value)
@@ -89,7 +91,8 @@ namespace DSPJapanesePlugin
                     coroutine.MoveNext();
                 }
             }
-            else
+            //辞書をダウンロードしない設定か、ダウンロード失敗したら
+            if (JPDictionary.Count == 0)
             {
                 LogManager.Logger.LogInfo("辞書を既存のファイルから読み込みます");
                 //LogManager.Logger.LogInfo("target path " + jsonFilePath);
@@ -98,9 +101,6 @@ namespace DSPJapanesePlugin
                     LogManager.Logger.LogInfo("File not found" + jsonFilePath);
                 }
                 JPDictionary = JSON.FromJson<Dictionary<string, string>>(File.ReadAllText(jsonFilePath));
-
-
-
             }
 
             //フォントの読み込み
@@ -124,7 +124,7 @@ namespace DSPJapanesePlugin
                 LogManager.Logger.LogInfo("e.StackTrace " + e.StackTrace);
             }
             //言語の設定
-            Localization.language = Language.frFR;
+            //Localization.language = Language.frFR;
 
             //UIの修正
             //fixUI();
@@ -169,6 +169,7 @@ namespace DSPJapanesePlugin
                 return true;
             }
         }
+
 
         //リソース全体のTextのフォントを変更   //新規文字列のチェック
         [HarmonyPatch(typeof(VFPreload), "PreloadThread")]

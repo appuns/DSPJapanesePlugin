@@ -40,6 +40,28 @@ namespace DSPJapanesePlugin
         //////////////////////////////////////////////////////////////////////////////////////////////
 
 
+        //初回起動時の言語選択画面で「日本語」を表示する
+        [HarmonyPostfix,HarmonyPatch(typeof(VFPreload), "Start")]
+        public static void VFPreload_Start_Patch()
+        {
+            GameObject btnZh = GameObject.Find("UI Root/Overlay Canvas/Splash/Launch Game/language-init/btn-zh").gameObject;
+            btnZh.transform.localPosition = new Vector3(-170f, 0f, 0f);
+            GameObject btnEn = GameObject.Find("UI Root/Overlay Canvas/Splash/Launch Game/language-init/btn-en").gameObject;
+            btnEn.transform.localPosition = new Vector3(0f, 0f, 0f);
+            GameObject btnFr = GameObject.Find("UI Root/Overlay Canvas/Splash/Launch Game/language-init/btn-fr").gameObject;
+            btnFr.transform.localPosition = new Vector3(170f, 0f, 0f);
+            btnFr.GetComponent<RectTransform>().sizeDelta = new Vector3(150f, 36f, 0f);
+            GameObject btnFrText = GameObject.Find("UI Root/Overlay Canvas/Splash/Launch Game/language-init/btn-fr/text").gameObject;
+            btnFrText.GetComponent<Text>().text = "日本語";
+            btnFr.SetActive(true);
+            GameObject tipText = GameObject.Find("UI Root/Overlay Canvas/Splash/Launch Game/language-init/tip-text").gameObject;
+            tipText.transform.localPosition = new Vector3(0f, 65f, 0f);
+            tipText.GetComponent<Text>().text = "请选择语言\r\nPlease select your language\r\n言語を選択してください";
+        }
+
+
+
+
         //レイレシーバーUIの修正
         [HarmonyPostfix, HarmonyPatch(typeof(UIPowerGeneratorWindow), "_OnInit")]
         public static void UIAssemblerWindow_OnInit_PostPatch()
@@ -53,40 +75,99 @@ namespace DSPJapanesePlugin
 
 
         //アイテムチップの増産剤効果表示の調整
-        [HarmonyPostfix, HarmonyPatch(typeof(UIItemTip), "SetTip")]
+        //[HarmonyPostfix, HarmonyPatch(typeof(UIItemTip), "SetTip")]
         public static void UIItemTip_SetTip_PostPatch(UIItemTip __instance)
         {
             if (Main.EnableFixUI.Value)
             {
-                GameObject incEffectName1 = __instance.transform.Find("inc-effect-name-1").gameObject;
-                incEffectName1.transform.localPosition = new Vector3(25f, incEffectName1.transform.localPosition.y, 0f);
-                GameObject incEffectName2 = incEffectName1.transform.Find("inc-effect-name-2").gameObject;
-                incEffectName2.transform.localPosition = new Vector3(153f, 0f, 0f);
-                GameObject incEffectName3 = incEffectName1.transform.Find("inc-effect-name-3").gameObject;
-                incEffectName3.transform.localPosition = new Vector3(253f, 0f, 0f);
-                incEffectName3.transform.localScale = new Vector3(0.8f, 1f, 1f);
-                incEffectName3.GetComponent<RectTransform>().sizeDelta = new Vector2(110f, 16f);
+                __instance.incNameText1.rectTransform.anchoredPosition = new Vector2(40f, __instance.incNameText1.rectTransform.anchoredPosition.y);
+                __instance.incNameText2.transform.localPosition = new Vector3(138f, 0f, 0f);
+                __instance.incNameText3.transform.localPosition = new Vector3(238f, 0f, 0f);
+                __instance.incNameText3.transform.localScale = new Vector3(0.8f, 1f, 1f);
+                __instance.incNameText3.rectTransform.sizeDelta = new Vector2(110f, 16f);
+
+                __instance.incDescText1[0].rectTransform.anchoredPosition = new Vector2(0f, __instance.incDescText1[0].rectTransform.anchoredPosition.y);
+                __instance.incDescText2[0].transform.localPosition = new Vector3(178f, 0f, 0f);
+                __instance.incDescText3[0].transform.localPosition = new Vector3(278f, 0f, 0f);
+                __instance.incDescText1[1].rectTransform.anchoredPosition = new Vector2(0f, __instance.incDescText1[1].rectTransform.anchoredPosition.y);
+                __instance.incDescText2[1].transform.localPosition = new Vector3(178f, 0f, 0f);
+                __instance.incDescText3[1].transform.localPosition = new Vector3(278f, 0f, 0f);
+                //__instance.incDescText1[0].text = "          " + __instance.incDescText1[0].text;
+                //__instance.incDescText1[1].text = "          " + __instance.incDescText1[1].text;
+
+                //GameObject incEffectName1 = __instance.transform.Find("inc-effect-name-1").gameObject;
+                //incEffectName1.transform.localPosition = new Vector3(25f, incEffectName1.transform.localPosition.y, 0f);
+                //GameObject incEffectName2 = incEffectName1.transform.Find("inc-effect-name-2").gameObject;
+                //incEffectName2.transform.localPosition = new Vector3(153f, 0f, 0f);
+                //GameObject incEffectName3 = incEffectName1.transform.Find("inc-effect-name-3").gameObject;
+                //incEffectName3.transform.localPosition = new Vector3(253f, 0f, 0f);
+                //incEffectName3.transform.localScale = new Vector3(0.8f, 1f, 1f);
+                //incEffectName3.GetComponent<RectTransform>().sizeDelta = new Vector2(110f, 16f);
             }
         }
 
-        //メカエディタ表示の調整
-        [HarmonyPostfix, HarmonyPatch(typeof(UIMechaEditor), "_OnInit")]
-        public static void UIMechaEditorl_OnInit_PostPatch(UIMechaEditor __instance)
+
+
+
+
+        //メカエディタ表示の調整１:パーツグループ
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIMechaPartGroup), "_OnInit")]
+        [HarmonyPatch(typeof(UIMechaPartGroup), "_OnOpen")]
+        public static void UIMechaPartGroup_OnInit_PostPatch(UIMechaPartGroup __instance)
         {
             if (Main.EnableFixUI.Value)
             {
-                GameObject Text1 = __instance.transform.Find("Left Panel/scroll-view/Viewport/Left Panel Content/part-group/disable-all-button/Text").gameObject;
-                Text1.transform.localScale = new Vector3(0.7f, 1f, 1f);
-                GameObject Text2 = __instance.transform.Find("Left Panel/scroll-view/Viewport/Left Panel Content/part-group/enable-all-button/Text").gameObject;
-                Text2.transform.localScale = new Vector3(0.7f, 1f, 1f);
-                GameObject Text3 = __instance.transform.Find("Left Panel/scroll-view/Viewport/Left Panel Content/bone-group/disable-all-button/Text").gameObject;
-                Text3.transform.localScale = new Vector3(0.7f, 1f, 1f);
-                GameObject Text4 = __instance.transform.Find("Left Panel/scroll-view/Viewport/Left Panel Content/bone-group/enable-all-button/Text").gameObject;
-                Text4.transform.localScale = new Vector3(0.7f, 1f, 1f);
+                GameObject disableAllText = __instance.transform.Find("disable-all-button/Text").gameObject;
+                disableAllText.transform.localScale = new Vector3(0.7f, 1f, 1f);
+                GameObject enableAllText = __instance.transform.Find("enable-all-button/Text").gameObject;
+                enableAllText.transform.localScale = new Vector3(0.7f, 1f, 1f);
+
             }
         }
 
+        //メカエディタ表示の調整２:ボーングループ
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIMechaBoneGroup), "_OnInit")]
+        [HarmonyPatch(typeof(UIMechaBoneGroup), "_OnOpen")]
+        public static void UIMechaBoneGroup_OnInit_PostPatch(UIMechaBoneGroup __instance)
+        {
+            if (Main.EnableFixUI.Value)
+            {
+                GameObject disableAllText = __instance.transform.Find("disable-all-button/Text").gameObject;
+                disableAllText.transform.localScale = new Vector3(0.7f, 1f, 1f);
+                GameObject enableAllText = __instance.transform.Find("enable-all-button/Text").gameObject;
+                enableAllText.transform.localScale = new Vector3(0.7f, 1f, 1f);
+                __instance.addButtonTip.transform.localScale = new Vector3(0.85f, 1f, 1f);
 
+            }
+        }
+
+        //メカエディタ表示の調整３：マテリアルグループ
+        [HarmonyPostfix, HarmonyPatch(typeof(UIMechaMatsGroup), "_OnInit")]
+        public static void UIMechaMatsGroup_OnInit_PostPatch(UIMechaMatsGroup __instance)
+        {
+            if (Main.EnableFixUI.Value)
+            {
+                GameObject titleText1 = __instance.transform.Find("fold-group-0/transfer-all-button/text").gameObject;
+                titleText1.transform.localScale = new Vector3(0.8f, 1f, 1f);
+                titleText1.GetComponent<RectTransform>().sizeDelta = new Vector2(50, 0);
+                GameObject titleText2 = __instance.transform.Find("fold-group-0/transfer-half-button/text").gameObject;
+                titleText2.transform.localScale = new Vector3(0.8f, 1f, 1f);
+                titleText2.GetComponent<RectTransform>().sizeDelta = new Vector2(50, 0);
+            }
+        }
+
+        //メカエディタ表示の調整４：propグループ
+        [HarmonyPostfix, HarmonyPatch(typeof(UIMechaPropGroup), "_OnInit")]
+        public static void UIMechaPropGroup_OnInit_PostPatch(UIMechaPropGroup __instance)
+        {
+            if (Main.EnableFixUI.Value)
+            {
+                GameObject titleText = __instance.transform.Find("title-text").gameObject;
+                titleText.transform.localScale = new Vector3(0.9f, 1f, 1f);
+            }
+        }
 
         //ダイソンスフィアエディタ表示の調整１
         [HarmonyPostfix, HarmonyPatch(typeof(UIDESwarmPanel), "_OnInit")]
@@ -127,6 +208,7 @@ namespace DSPJapanesePlugin
 
 
         //組み立て機等のアラームボタンの調整
+        [HarmonyPatch]
         public static class alarmSwitchButton_Patch
         {
             [HarmonyTargetMethods]
@@ -186,24 +268,43 @@ namespace DSPJapanesePlugin
             }
         }
         //ブループリント保存画面のUI修正１
-        [HarmonyPostfix, HarmonyPatch(typeof(UIBlueprintBrowser), "_OnOpen")]
+        [HarmonyPostfix, HarmonyPatch(typeof(UIBlueprintBrowser), "_OnCreate")]
         public static void UIBlueprintBrowser_OnOpen_Harmony(UIBlueprintBrowser __instance)
         {
             if (Main.EnableFixUI.Value)
             {
-                GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser/inspector-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
-                GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser/inspector-group/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
-                GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Browser/folder-info-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
-                GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Copy Mode/Blueprint Copy Inspector/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
-                GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Blueprint Copy Mode/Blueprint Copy Inspector/group-1/save-state-text").transform.localPosition = new Vector3(80, -30, 0);
+                //GameObject windows = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows");
+                //windows.transform.Find("Blueprint Browser/inspector-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
+                //  windows.transform.Find("Blueprint Browser/inspector-group/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
+                //windows.transform.Find("Blueprint Browser/folder-info-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
+                //windows.transform.Find("Blueprint Copy Mode/Blueprint Copy Inspector/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
+                //windows.transform.Find("Blueprint Copy Mode/Blueprint Copy Inspector/group-1/save-state-text").transform.localPosition = new Vector3(80, -30, 0);
                 //__instance.transform.Find("inspector-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
                 //__instance.transform.Find("inspector-group/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
                 //__instance.transform.Find("folder-info-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
             }
         }
 
-        //ブループリント保存画面のUI修正１
-        //[HarmonyPatch(typeof(UIBlueprintInspector), "_OnOpen")]
+        //ブループリント保存画面のUI修正２
+        [HarmonyPatch(typeof(UIBlueprintInspector), "_OnCreate")]
+        public static class UIBlueprintInspector_OnOpen_Harmony
+        {
+            [HarmonyPostfix]
+            public static void Postfix(UIBlueprintInspector __instance)
+            {
+                if (Main.EnableFixUI.Value)
+                {
+                    __instance.deleteButton.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
+                    __instance.group1.gameObject.transform.Find("thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
+                }
+            }
+        }
+
+
+
+
+        //ブループリント保存画面のUI修正３
+        //[HarmonyPatch(typeof(UIBlueprintInspector), "_OnCreate")]
         //public static class UIBlueprintInspector_OnOpen_Harmony
         //{
         //    [HarmonyPostfix]
@@ -211,13 +312,12 @@ namespace DSPJapanesePlugin
         //    {
         //        if (Main.EnableFixUI.Value)
         //        {
+        //            __instance.group1.gameObject.transform.Find("thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
         //            //__instance.transform.Find("Blueprint Copy Inspector/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
         //            //__instance.transform.Find("Blueprint Copy Inspector/group-1/save-state-text").transform.localPosition = new Vector3(80, -30, 0);
         //        }
         //    }
         //}
-
-
 
 
 
@@ -296,17 +396,26 @@ namespace DSPJapanesePlugin
         {
             if (Main.EnableFixUI.Value)
             {
-                __instance.transform.Find("right-group/m-star").GetComponent<Text>().text = "　　　　　　　" + "M型恒星".Translate();
-                __instance.transform.Find("right-group/k-star").GetComponent<Text>().text = "　　　　　　　" + "K型恒星".Translate();
-                __instance.transform.Find("right-group/g-star").GetComponent<Text>().text = "　　　　　　　" + "G型恒星".Translate();
-                __instance.transform.Find("right-group/f-star").GetComponent<Text>().text = "　　　　　　　" + "A型恒星".Translate();
-                __instance.transform.Find("right-group/a-star").GetComponent<Text>().text = "　　　　　　　" + "B型恒星".Translate();
-                __instance.transform.Find("right-group/b-star").GetComponent<Text>().text = "　　　　　　　" + "O型恒星".Translate();
-                __instance.transform.Find("right-group/o-star").GetComponent<Text>().text = "　　　　　　　" + "M型恒星".Translate();
-                __instance.transform.Find("right-group/n-star").GetComponent<Text>().text = "　　　　　　　" + "空格中子星".Translate();
-                __instance.transform.Find("right-group/wd-star").GetComponent<Text>().text = "　　　　　　　" + "空格白矮星".Translate();
-                __instance.transform.Find("right-group/bh-star").GetComponent<Text>().text = "　　　　　　　" + "空格黑洞".Translate();
+                MoveStarCount("m-star");
+                MoveStarCount("k-star");
+                MoveStarCount("g-star");
+                MoveStarCount("f-star");
+                MoveStarCount("a-star");
+                MoveStarCount("b-star");
+                MoveStarCount("o-star");
+                MoveStarCount("n-star");
+                MoveStarCount("wd-star");
+                MoveStarCount("bh-star");
             }
+        }
+         
+        static void MoveStarCount(string starType)
+        {
+            GameObject starSet = GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/" + starType);
+            float y = starSet.transform.localPosition.y;
+            starSet.transform.localPosition = new Vector3(-15f, y, 0);
+            starSet.transform.Find("count").transform.localPosition = new Vector3(-220f, 0, 0);
+            starSet.transform.Find("Image").transform.localPosition = new Vector3(-212f, -16f, 0);
         }
 
 

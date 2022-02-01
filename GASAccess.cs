@@ -59,15 +59,9 @@ namespace DSPJapanesePlugin
                 else if (request.downloadHandler.data.Length < 2000)
                 {
                     LogManager.Logger.LogInfo("辞書のダウンロードに失敗しました　:　" + Regex.Match(request.downloadHandler.text, @"TypeError.*）"));
-                    if (!File.Exists(dstPath))
-                    {
-                        LogManager.Logger.LogInfo("File not found" + dstPath);
-                    }
-                    Main.JPDictionary = JSON.FromJson<Dictionary<string, string>>(File.ReadAllText(dstPath));
                 }
                 else
                 {
-
                     LogManager.Logger.LogInfo("辞書をダウンロードしました");
                     Main.JPDictionary = JSON.FromJson<Dictionary<string, string>>(request.downloadHandler.text);
                     File.WriteAllText(dstPath, request.downloadHandler.text);
@@ -93,7 +87,6 @@ namespace DSPJapanesePlugin
             else if (request.downloadHandler.data.Length < 2000)
             {
                 LogManager.Logger.LogInfo("辞書のダウンロードに失敗しました　:　" + Regex.Match(request.downloadHandler.text, @"TypeError.*）"));
-
             }
             else
             {
