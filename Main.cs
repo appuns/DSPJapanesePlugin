@@ -30,7 +30,7 @@ using System.Security.Permissions;
 
 namespace DSPJapanesePlugin
 {
-    [BepInPlugin("Appun.DSP.plugin.JapanesePlugin", "DSPJapanesePlugin", "1.1.5")]
+    [BepInPlugin("Appun.DSP.plugin.JapanesePlugin", "DSPJapanesePlugin", "1.1.7")]
 
     public class Main : BaseUnityPlugin
     {
@@ -49,6 +49,7 @@ namespace DSPJapanesePlugin
         //public static ConfigEntry<bool> firstBoot;
         public static ConfigEntry<string> DictionaryGAS;
         public static ConfigEntry<string> SsheetGAS;
+        public static ConfigEntry<string> TranslateGAS;
 
         //private static ConfigEntry<bool> enableShowUnTranslatedStrings;
         //private static ConfigEntry<bool> enableNewWordExport;
@@ -71,8 +72,8 @@ namespace DSPJapanesePlugin
             ImportSheet = Config.Bind("翻訳者、開発者向けの設定：基本的に変更しないでください。", "ImportSheet", false, "翻訳作業所のシートのデータを取り込んで辞書ファイルを作るかどうか");
             DictionaryGAS = Config.Bind("翻訳者、開発者向けの設定：基本的に変更しないでください。", "DictionaryGAS", "https://script.google.com/macros/s/AKfycbwRjiRA6PUeh02MOQ6ccWfbhkQ3wW_qxM6MEl_UXcltGHnU59GLhIOcNNoM35NS7N7_/exec", "日本語辞書ファイル取得のスクリプトアドレス");
             SsheetGAS = Config.Bind("翻訳者、開発者向けの設定：基本的に変更しないでください。", "SsheetGAS", "https://script.google.com/macros/s/AKfycbxOATSa3MHENWQfWc8Ti6XLK-yx-HjzvoLMnO7S2u2nKuZYrRrD3Luh2NLA6jehgf1RUQ/exec", "翻訳作業所のシート取得のスクリプトアドレス");
+            TranslateGAS = Config.Bind("翻訳者、開発者向けの設定：基本的に変更しないでください。", "TraslateGAS", "https://script.google.com/macros/s/AKfycbzaQLfuzNbo-uOO0XtLKq6xjQIgNC2_IibXbVzZEEtSRXBWKD06q8OuDMbZd_XQXHH8/exec", "google翻訳のスクリプトアドレス");
             exportNewStrings = Config.Bind("翻訳者、開発者向けの設定：基本的に変更しないでください。", "exportNewStrings", false, "バージョンアップ時に新規文字列を翻訳作業所用に書き出すかどうか。");
-            exportNewStrings = Config.Bind("MODno", "exportNewStrings", false, "バージョンアップ時に新規文字列を翻訳作業所用に書き出すかどうか。");
 
             //辞書ファイルのダウンロード
             if (EnableAutoUpdate.Value)
@@ -130,148 +131,6 @@ namespace DSPJapanesePlugin
             //fixUI();
         }
 
-
-        //コンボボックスへ「日本語」を追加
-        [HarmonyPatch(typeof(UIOptionWindow), "TempOptionToUI")]
-        public static class UIOptionWindow_TempOptionToUI_Harmony
-        {
-            [HarmonyPrefix]
-            public static void Prefix(UIOptionWindow __instance)
-            {
-                if (!__instance.languageComp.Items.Contains("日本語"))
-                {
-                    __instance.languageComp.Items.Add("日本語");
-                    __instance.languageComp.itemIndex = 2;
-                }
-            }
-        }
-
-        //翻訳メイン
-        [HarmonyPatch(typeof(StringTranslate), "Translate", typeof(string))]
-        public static class StringTranslate_Translate_Prefix
-        {
-            [HarmonyPrefix]
-            public static bool Prefix(ref string __result, string s)
-            {
-                if (Localization.language == Language.frFR)
-                {
-                    if (s == null)
-                    {
-                        return true;
-                    }
-
-                    if (JPDictionary.ContainsKey(s))
-                    {
-                        __result = JPDictionary[s];
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
-
-
-        //リソース全体のTextのフォントを変更   //新規文字列のチェック
-        [HarmonyPatch(typeof(VFPreload), "PreloadThread")]
-        public static class VFPreload_PreloadThread_Patch
-        {
-            [HarmonyPostfix]
-            public static void Postfix()
-            {
-                LogManager.Logger.LogInfo("フォントを変更しました");
-                var texts = Resources.FindObjectsOfTypeAll(typeof(Text)) as Text[];
-                foreach (var text in texts)
-                {
-                    text.font = newFont;
-
-                    if (JPDictionary.ContainsKey(text.text))
-                    {
-                        text.text = JPDictionary[text.text];
-                    }
-                }
-
-                //新規文字列のチェック
-                if (exportNewStrings.Value)
-                {
-                    LogManager.Logger.LogInfo("新規文字列をチェックします");
-                    string path = LDB.protoResDir + typeof(StringProtoSet).Name;
-                    StringProtoSet strings = (Resources.Load(path) as StringProtoSet);
-                    StringProtoSet stringProtoSet = Localization.strings;
-                    var tsvText = new StringBuilder();
-
-                    for (int i = 0; i < strings.Length; i++)
-                    {
-
-                        if (!JPDictionary.ContainsKey(strings[i].Name))
-                        {
-                            StringProto stringProto = strings[strings[i].Name];
-                            string enUS = stringProto.ENUS.Replace("\n", "[LF]").Replace("\r\n", "[CRLF]");
-                            string zhCN = stringProto.ZHCN.Replace("\n", "[LF]").Replace("\r\n", "[CRLF]");
-                            string frFR = stringProto.FRFR.Replace("\n", "[LF]").Replace("\r\n", "[CRLF]");
-
-                            tsvText.Append($"\t\t{strings[i].Name}\t=googletranslate(\"{enUS}\",\"en\",\"ja\")\tnew\t\t{enUS}\t{zhCN}\t{frFR}\r\n");
-                            LogManager.Logger.LogInfo($"新規文字列 {i} : {strings[i].Name} : {enUS}");
-                        }
-                    }
-                    if (tsvText.Length == 0)
-                    {
-                        LogManager.Logger.LogInfo("新規文字列はありません");
-                    }
-                    else
-                    {
-                        LogManager.Logger.LogInfo($"新規文字列がありましたので、{newStringsFilePath}に書き出しました。");
-                    }
-
-                    File.WriteAllText(newStringsFilePath, tsvText.ToString());
-                }
-            }
-        }
-
-        //未翻訳のMODアイテム名と説明分、MOD技術名と説明文の翻訳  新規文字列チェック
-        [HarmonyPatch(typeof(VFPreload), "InvokeOnLoadWorkEnded")]
-        public static class VFPreload_InvokeOnLoadWorkEnded_Patch
-        {
-            [HarmonyPostfix]
-            [HarmonyPriority(1)]
-            public static void Postfix()
-            {
-                //未翻訳のMODアイテム名と説明分、MOD技術名と説明文の翻訳
-                if (Localization.language == Language.frFR)
-                {
-                    foreach (var item in LDB.items.dataArray)
-                    {
-                        if (item == null || item.name == null || item.description == null)
-                            continue;
-
-                        if (JPDictionary.ContainsKey(item.name))
-                        {
-                            item.name = JPDictionary[item.name];
-                        }
-                        if (JPDictionary.ContainsKey(item.description))
-                        {
-                            item.description = JPDictionary[item.description];
-                        }
-                    }
-
-                    foreach (var tech in LDB.techs.dataArray)
-                    {
-                        if (tech == null || tech.name == null || tech.description == null)
-                            continue;
-
-                        if (JPDictionary.ContainsKey(tech.name))
-                        {
-                            tech.name = JPDictionary[tech.name];
-                        }
-                        if (JPDictionary.ContainsKey(tech.description))
-                        {
-                            tech.description = JPDictionary[tech.description];
-                        }
-                    }
-                    LogManager.Logger.LogInfo("MODを翻訳しました");
-
-                }
-            }
-        }
 
     }
 

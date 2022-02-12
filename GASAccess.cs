@@ -121,5 +121,32 @@ namespace DSPJapanesePlugin
             yield return null;
         }
 
+        //GAS翻訳コルーチン
+        public static IEnumerator TranslateString(String ENUSString)
+        {
+            if (ENUSString == "") yield return "";
+            UnityWebRequest request = UnityWebRequest.Get($"{Main.TranslateGAS.Value}?text={ENUSString}");
+            request.timeout = 10;
+            AsyncOperation checkAsync = request.SendWebRequest();
+            while (!checkAsync.isDone) ;
+            if (request.isNetworkError || request.isHttpError)
+            {
+                LogManager.Logger.LogInfo("GASアクセスエラー : " + request.error);
+            }
+            else
+            {
+                if (request.downloadHandler.text == "traslateFailed")
+                {
+                    LogManager.Logger.LogInfo("GAS翻訳に失敗しました。");
+                }
+                else
+                {
+                    LogManager.Logger.LogInfo("GAS翻訳に成功しました。: " + request.downloadHandler.text);
+                }
+            }
+
+            yield return request.downloadHandler.text;
+        }
+
     }
 }

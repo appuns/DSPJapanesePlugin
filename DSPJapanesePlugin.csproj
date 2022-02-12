@@ -108,6 +108,8 @@
   <ItemGroup>
     <Compile Include="GASAccess.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="NewStrings.cs" />
+    <Compile Include="TranslatePatches.cs" />
     <Compile Include="UIPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleJSON\SimpleJSON.cs" />

@@ -268,20 +268,14 @@ namespace DSPJapanesePlugin
             }
         }
         //ブループリント保存画面のUI修正１
-        [HarmonyPostfix, HarmonyPatch(typeof(UIBlueprintBrowser), "_OnCreate")]
+        //[HarmonyPostfix, HarmonyPatch(typeof(UIBlueprintBrowser), "_OnCreate")]
         public static void UIBlueprintBrowser_OnOpen_Harmony(UIBlueprintBrowser __instance)
         {
             if (Main.EnableFixUI.Value)
             {
-                //GameObject windows = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows");
-                //windows.transform.Find("Blueprint Browser/inspector-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
-                //  windows.transform.Find("Blueprint Browser/inspector-group/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
-                //windows.transform.Find("Blueprint Browser/folder-info-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
-                //windows.transform.Find("Blueprint Copy Mode/Blueprint Copy Inspector/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
-                //windows.transform.Find("Blueprint Copy Mode/Blueprint Copy Inspector/group-1/save-state-text").transform.localPosition = new Vector3(80, -30, 0);
-                //__instance.transform.Find("inspector-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
-                //__instance.transform.Find("inspector-group/group-1/thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
-                //__instance.transform.Find("folder-info-group/delete-button").GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
+
+
+
             }
         }
 
@@ -296,6 +290,9 @@ namespace DSPJapanesePlugin
                 {
                     __instance.deleteButton.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
                     __instance.group1.gameObject.transform.Find("thumbnail-image/layout-combo/label").GetComponent<RectTransform>().sizeDelta = new Vector2(100, 30);
+                    __instance.pasteButton.gameObject.transform.Find("text").transform.localScale = new Vector3(0.8f, 1, 1);
+                    __instance.pasteButton.gameObject.transform.Find("text").GetComponent<RectTransform>().sizeDelta = new Vector2(10, 2);
+                    __instance.savePathStateText.gameObject.transform.localScale = new Vector3(0.9f, 1, 1);
                 }
             }
         }
