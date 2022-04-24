@@ -60,6 +60,15 @@ namespace DSPJapanesePlugin
         }
 
 
+        //ロード画面の画像でメタ寄与数が表示されない問題の修正
+        [HarmonyPrefix, HarmonyPatch(typeof(UILoadGameWindow), "_OnCreate")]
+        public static void UILoadGameWindowt__OnCreate(UILoadGameWindow __instance)
+        {
+            //LogManager.Logger.LogInfo("ロード画面の画像でメタ寄与数が表示されない問題の修正");
+
+            __instance.propertyItemPrefab.countText.GetComponent<RectTransform>().sizeDelta = new Vector2(60f, 20f);
+
+        }
 
 
         //レイレシーバーUIの修正

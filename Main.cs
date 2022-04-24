@@ -30,7 +30,7 @@ using System.Security.Permissions;
 
 namespace DSPJapanesePlugin
 {
-    [BepInPlugin("Appun.DSP.plugin.JapanesePlugin", "DSPJapanesePlugin", "1.1.7")]
+    [BepInPlugin("Appun.DSP.plugin.JapanesePlugin", "DSPJapanesePlugin", "1.1.8")]
 
     public class Main : BaseUnityPlugin
     {
@@ -93,7 +93,7 @@ namespace DSPJapanesePlugin
                 }
             }
             //辞書をダウンロードしない設定か、ダウンロード失敗したら
-            if (JPDictionary.Count == 0)
+            if (JPDictionary == null)
             {
                 LogManager.Logger.LogInfo("辞書を既存のファイルから読み込みます");
                 //LogManager.Logger.LogInfo("target path " + jsonFilePath);
