@@ -83,7 +83,11 @@ namespace DSPJapanesePlugin
             var texts = Resources.FindObjectsOfTypeAll(typeof(Text)) as Text[];
             foreach (var text in texts)
             {
-                text.font = Main.newFont;
+                //フォント
+                if (text.font.name != "DIN")
+                {
+                    text.font = Main.newFont;
+                }
 
                 if (Main.JPDictionary.ContainsKey(text.text))
                 {

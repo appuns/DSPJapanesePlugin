@@ -39,6 +39,41 @@ namespace DSPJapanesePlugin
         //////////////////////////////////////表示の修正//////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////
 
+        //サンドボックスツールの表示を調整　0.9.26.12891
+        [HarmonyPostfix, HarmonyPatch(typeof(UISandboxMenu), "_OnOpen")]
+        public static void UISandboxMenu_OnOpen_Patch()
+        {
+            GameObject tip = GameObject.Find("UI Root/Overlay Canvas/In Game/Function Panel/Sandbox Menu/general-group/tools-group/fast-build-batch-size/tip").gameObject;
+            tip.GetComponent<Text>().alignment = TextAnchor.UpperRight;
+            tip.transform.localPosition = new Vector3(tip.transform.localPosition.x, -25f, 0f);
+        }
+
+        //合成機ウインドウの無料アイテム関係の表示を調整　0.9.26.12891
+        [HarmonyPostfix, HarmonyPatch(typeof(UIReplicatorWindow), "_OnOpen")]
+        public static void UIReplicatorWindow_OnOpen_Patch()
+        {
+            GameObject label = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Replicator Window/recipe-group/instant-switch/label").gameObject;
+            label.GetComponent<RectTransform>().sizeDelta = new Vector2(80f, 36f);
+            GameObject buttonText = GameObject.Find("UI Root/Overlay Canvas/In Game/Windows/Replicator Window/recipe-group/sandbox-button-2/button-text").gameObject;
+            buttonText.GetComponent<RectTransform>().sizeDelta = new Vector2(40f, 0f);
+            buttonText.transform.localScale = new Vector3(0.75f, 1f, 1f);
+        }
+
+        //ロード画面の「サンドボックスツールを有効にする」の場所を調整　0.9.26.12891
+        [HarmonyPostfix, HarmonyPatch(typeof(UILoadGameWindow), "_OnOpen")]
+        public static void UILoadGameWindow_OnOpen_Patch()
+        {
+            GameObject loadSandbox = GameObject.Find("UI Root/Overlay Canvas/Top Windows/Load Game Window/load-sandbox").gameObject;
+            loadSandbox.transform.localPosition = new Vector3(450f, loadSandbox.transform.localPosition.y, 0f);
+        }
+
+        //セーブ画面のクラウド保存の警告の場所を調整　
+        [HarmonyPostfix, HarmonyPatch(typeof(UISaveGameWindow), "_OnOpen")]
+        public static void VFPreload_Start2_Patch()
+        {
+            GameObject tipText = GameObject.Find("UI Root/Overlay Canvas/Top Windows/Save Game Window/tip-text").gameObject;
+            tipText.transform.localPosition = new Vector3(-666f, tipText.transform.localPosition.y, 0f);
+        }
 
         //初回起動時の言語選択画面で「日本語」を表示する
         [HarmonyPostfix,HarmonyPatch(typeof(VFPreload), "Start")]

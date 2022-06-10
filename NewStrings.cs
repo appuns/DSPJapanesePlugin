@@ -32,26 +32,37 @@ namespace DSPJapanesePlugin
         {
             //新規文字列のチェック
             string assetPath = Path.Combine(Paths.GameRootPath, @"DSPGAME_Data\resources.assets");
-
             using (var fs = new FileStream(assetPath, FileMode.Open))
             using (var br = new BinaryReader(fs))
             {
                 byte[] StringBinary = { 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x53, 0x65, 0x74, 0x00, 0x00 };
-                int matchCount = 0;
-                byte[] checker;
-                while (matchCount != 15)
+                //int matchCount = 0;
+                //byte[] checker;
+                bool fToken = false;
+                bool found = false;
+                byte b;
+                while (true)
                 {
-                    checker = br.ReadBytes(16);
-                    for (int j = 0; j < 16; j++)
+                    b = br.ReadByte();
+                    if (b == StringBinary[0])
                     {
-                        if (checker[j] != StringBinary[j])
+                        fToken = true;
+                        for (int i = 1; i < StringBinary.Length; i++)
                         {
+                            if (fs.ReadByte() != StringBinary[i])
+                            {
+                                fToken = false;
+                                break;
+                            }
+                        }
+                        if (fToken == true)
+                        {
+                            found  = true;
                             break;
                         }
-                        matchCount = j;
                     }
                 }
-                if (matchCount == 15)
+                if (found)
                 {
                     LogManager.Logger.LogInfo("StringProtoSet取得成功");
 
@@ -84,9 +95,9 @@ namespace DSPJapanesePlugin
                             coroutine.MoveNext();
                             //記号を戻す
                             string JpString = coroutine.Current.ToString().Replace("<color = ", "<color=").Replace("</ color>", "</color>").Replace("[SHARP] ","#").Replace("[SHARP]", "#").Replace("<size = ", "<size=").Replace("</ size>", "</size>");//.Replace(" [FORMATTEDNUM] ", "{0}").Replace("[FORMATTEDNUM]", "{0}");
+                            //LogManager.Logger.LogInfo($" {Index} : {numString} : {keyString} : {JpString}: {ENUSString}  : {FRFRString}");
 
                             tsvText.Append($"{Index}\t{numString}\t{keyString}\t{JpString}\tnew\t\t{ENUSString}\t{ZHCNString}\t{FRFRString}\r\n");
-                            //LogManager.Logger.LogInfo($" {Index} : {numString} : {keyString} : {JpString}: {ENUSString}  : {FRFRString}");
                             //string Text = $"{Index}\t{numString}\t{keyString}\t{JpString}\tnew\t\t{ENUSString}\t{ZHCNString}\t{FRFRString}\r\n";
                             //File.AppendAllText(Main.newStringsFilePath, Text);
 
@@ -110,7 +121,7 @@ namespace DSPJapanesePlugin
                         LogManager.Logger.LogInfo($"新規文字列がありましたので、{Main.newStringsFilePath}に書き出しました。");
                     }
 
-                    //File.WriteAllText(Main.newStringsFilePath, tsvText.ToString());
+                    File.WriteAllText(Main.newStringsFilePath, tsvText.ToString());
                 }
                 else
                 {

@@ -128,8 +128,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins\DSPJapanesePlugin" /Y
-xcopy "$(TargetPath)" "$(ProjectDir)" /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Dyson Sphere Program\BepInEx\plugins" /Y
+xcopy "$(TargetPath)" "$(ProjectDir)$(ProjectName)" /Y
+xcopy "$(ProjectDir)README.md" "$(ProjectDir)$(ProjectName)" /Y
+xcopy "$(ProjectDir)manifest.json" "$(ProjectDir)$(ProjectName)" /Y
+xcopy "$(ProjectDir)icon.png" "$(ProjectDir)$(ProjectName)" /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
