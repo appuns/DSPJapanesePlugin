@@ -29,54 +29,98 @@ namespace DSPJapanesePlugin
     [HarmonyPatch]
     internal class TranslatePatches
     {
-        //コンボボックスへ「日本語」を追加
-        [HarmonyPrefix, HarmonyPatch(typeof(UIOptionWindow), "TempOptionToUI")]
-        public static void UIOptionWindow_TempOptionToUI_Harmony(UIOptionWindow __instance)
-        {
-            if (!__instance.languageComp.Items.Contains("日本語"))
-            {
-                __instance.languageComp.Items.Add("日本語");
-                __instance.languageComp.itemIndex = 2;
-            }
-        }
+        ////コンボボックスへ「日本語」を追加
+        //[HarmonyPrefix, HarmonyPatch(typeof(UIOptionWindow), "TempOptionToUI")]
+        //public static void UIOptionWindow_TempOptionToUI_Harmony(UIOptionWindow __instance)
+        //{
+        //    if (!__instance.languageComp.Items.Contains("日本語"))
+        //    {
+        //        __instance.languageComp.Items.Add("日本語");
+        //        __instance.languageComp.itemIndex = 2;
+        //    }
+        //}
 
         //翻訳メイン
-        [HarmonyPrefix, HarmonyPatch(typeof(StringTranslate), "Translate", typeof(string))]
-        public static bool StringTranslate_Translate_Prefix(ref string __result, string s)
+        [HarmonyPrefix, HarmonyPatch(typeof(Localization), "Translate", typeof(string))]
+        public static bool Localization_Translate_Prefix(ref string __result, string s)
         {
-            if (Localization.language == Language.frFR)
+
+            if (s == null)
             {
-                if (s == null)
-                {
                     __result = "";
                     return false;
-                }
-                if (Main.JPDictionary.ContainsKey(s))
-                {
-                    __result = Main.JPDictionary[s];
+            }
+            if (Localization.namesIndexer == null || Localization.currentStrings == null)
+            {
+                __result = s;
                     return false;
-                }
-                //日本語辞書に無い場合
-                StringProtoSet strings = Localization.strings;
-                if (strings == null)
-                {
-                    __result = s;
-                    return false;
-                }
-                StringProto stringProto = strings[s];
-                if (stringProto == null)
-                {
-                    __result = s;
-                    return false;
-                }
-                __result = stringProto.ENUS;
+            }
+            if (Main.JPDictionary.ContainsKey(s))
+            {
+                __result = Main.JPDictionary[s];
+
                 return false;
             }
+            if (!Localization.namesIndexer.ContainsKey(s))
+            {
+                __result = s;
+                return false;
+            }
+
+
+            __result = Localization.currentStrings[Localization.namesIndexer[s]];
+            return false;
+        }
+
+        //[HarmonyPrefix, HarmonyPatch(typeof(Localization), "Load", typeof(string))]
+        public static bool Localization_Load_Prefix(ref string __result, string path)
+        {
+
+            if (Localization.Loaded)
+            {
+                Localization.Unload();
+            }
+            if (string.IsNullOrEmpty(path))
+            {
+                return false;
+            }
+            Localization.ResourcesPath = path.Replace('\\', '/');
+            if (Localization.ResourcesPath[Localization.ResourcesPath.Length - 1] != '/')
+            {
+                Localization.ResourcesPath += "/";
+            }
+            if (!Directory.Exists(Localization.ResourcesPath))
+            {
+                Localization.ResourcesPath = null;
+                return false;
+            }
+            if (Localization.LoadSettings())
+            {
+                int num = 0;
+                int languageCount = Localization.LanguageCount;
+                for (int i = 0; i < languageCount; i++)
+                {
+                    if (Localization.Languages[i].lcId == Localization.preSelectLanguageLCID)
+                    {
+                        num = i;
+                        break;
+                    }
+                }
+                Localization.currentLanguageIndex = num;
+                if (Localization.Languages.Length > num && Localization.LoadLanguage(num))
+                {
+                    Localization.currentStrings = Localization.strings[num];
+                    Localization.currentFloats = Localization.floats[num];
+                    Localization.NotifyLanguageChange();
+                    return true;
+                }
+            }
+            Localization.Unload();
             return true;
         }
 
 
-        //リソース全体のTextのフォントを変更   //新規文字列のチェック
+        ////リソース全体のTextのフォントを変更   //新規文字列のチェック
         [HarmonyPostfix, HarmonyPatch(typeof(VFPreload), "PreloadThread")]
         public static void VFPreload_PreloadThread_Patch()
         {
@@ -84,7 +128,7 @@ namespace DSPJapanesePlugin
             foreach (var text in texts)
             {
                 //フォント
-                if (text.font.name != "DIN")
+                if (text.font != null && text.font.name != "DIN")
                 {
                     text.font = Main.newFont;
                 }
@@ -96,56 +140,13 @@ namespace DSPJapanesePlugin
             }
             LogManager.Logger.LogInfo("フォントを変更しました");
 
-            //新規文字列のチェック
-            if (Main.exportNewStrings.Value)
-            {
-                LogManager.Logger.LogInfo("新規文字列をチェックします");
-                NewStrings.Check();
-            }
+
+
+
+            NewStrings.Check();
         }
 
 
-        //未翻訳のMODアイテム名と説明分、MOD技術名と説明文の翻訳  新規文字列チェック
-        [HarmonyPostfix, HarmonyPatch(typeof(VFPreload), "InvokeOnLoadWorkEnded")]
-        [HarmonyPriority(1)]
-        public static void VFPreload_InvokeOnLoadWorkEnded_Patch()
-        {
-            //未翻訳のMODアイテム名と説明分、MOD技術名と説明文の翻訳
-            if (Localization.language == Language.frFR)
-            {
-                foreach (var item in LDB.items.dataArray)
-                {
-                    if (item == null || item.name == null || item.description == null)
-                        continue;
-
-                    if (Main.JPDictionary.ContainsKey(item.name))
-                    {
-                        item.name = Main.JPDictionary[item.name];
-                    }
-                    if (Main.JPDictionary.ContainsKey(item.description))
-                    {
-                        item.description = Main.JPDictionary[item.description];
-                    }
-                }
-
-                foreach (var tech in LDB.techs.dataArray)
-                {
-                    if (tech == null || tech.name == null || tech.description == null)
-                        continue;
-
-                    if (Main.JPDictionary.ContainsKey(tech.name))
-                    {
-                        tech.name = Main.JPDictionary[tech.name];
-                    }
-                    if (Main.JPDictionary.ContainsKey(tech.description))
-                    {
-                        tech.description = Main.JPDictionary[tech.description];
-                    }
-                }
-                LogManager.Logger.LogInfo("MODを翻訳しました");
-
-            }
-        }
 
 
     }
