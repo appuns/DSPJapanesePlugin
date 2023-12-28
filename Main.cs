@@ -30,7 +30,7 @@ using System.Security.Permissions;
 
 namespace DSPJapanesePlugin
 {
-    [BepInPlugin("Appun.DSP.plugin.JapanesePlugin", "DSPJapanesePlugin", "1.1.8")]
+    [BepInPlugin("Appun.DSP.plugin.JapanesePlugin", "DSPJapanesePlugin", "1.2.2")]
 
     public class Main : BaseUnityPlugin
     {
@@ -39,7 +39,7 @@ namespace DSPJapanesePlugin
         public static Font newFont { get; set; }
         public static Dictionary<string, string> JPDictionary { get; set; }
 
-        public static StringProtoSet _strings;
+        //public static StringProtoSet _strings;
 
 
         public static ConfigEntry<bool> EnableFixUI;
@@ -66,6 +66,7 @@ namespace DSPJapanesePlugin
             //LogManager.Logger.LogInfo("DSPJapanesePlugin awake");
 
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
+
 
             EnableFixUI = Config.Bind("表示の修正：アップデートでエラーが出る場合はfalseにすると解消できる可能性があります。", "EnableFixUI", true, "日本語化に伴い発生する表示の問題を修正するか");
             EnableAutoUpdate = Config.Bind("辞書自動アップデート：起動時に日本語辞書ファイルを自動でダウンロードすることができます。", "EnableAutoUpdate", true, "起動時に日本語辞書ファイルを自動でアップデートするかどうか");
@@ -96,12 +97,12 @@ namespace DSPJapanesePlugin
             if (JPDictionary == null)
             {
                 LogManager.Logger.LogInfo("辞書を既存のファイルから読み込みます");
-                //LogManager.Logger.LogInfo("target path " + jsonFilePath);
-                if (!File.Exists(jsonFilePath))
-                {
-                    LogManager.Logger.LogInfo("File not found" + jsonFilePath);
-                }
-                JPDictionary = JSON.FromJson<Dictionary<string, string>>(File.ReadAllText(jsonFilePath));
+            //LogManager.Logger.LogInfo("target path " + jsonFilePath);
+            if (!File.Exists(jsonFilePath))
+            {
+                LogManager.Logger.LogInfo("File not found" + jsonFilePath);
+            }
+            JPDictionary = JSON.FromJson<Dictionary<string, string>>(File.ReadAllText(jsonFilePath));
             }
 
             //フォントの読み込み
@@ -124,11 +125,16 @@ namespace DSPJapanesePlugin
                 LogManager.Logger.LogInfo("e.Message " + e.Message);
                 LogManager.Logger.LogInfo("e.StackTrace " + e.StackTrace);
             }
+
+
+
+
+
+
             //言語の設定
             //Localization.language = Language.frFR;
 
-            //UIの修正
-            //fixUI();
+
         }
 
 
