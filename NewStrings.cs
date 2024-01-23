@@ -43,13 +43,20 @@ namespace DSPJapanesePlugin
                     string ENUSStringReplaced = Localization.currentStrings[keyValuePair.Value].Replace("#", "[SHARP]").Replace("\r\n", "[CRLF]").Replace("\n", "[LF]");
 
 
-                    IEnumerator coroutine = GASAccess.TranslateString(ENUSStringReplaced);
-                    coroutine.MoveNext();
+                    //IEnumerator coroutine = GASAccess.TranslateString(ENUSStringReplaced);
+                    //coroutine.MoveNext();
                     //記号を戻す
-                    string JpString = coroutine.Current.ToString().Replace("<color = ", "<color=").Replace("</ color>", "</color>").Replace("[SHARP] ", "#").Replace("[SHARP]", "#").Replace("<size = ", "<size=").Replace("</ size>", "</size>");//.Replace(" [FORMATTEDNUM] ", "{0}").Replace("[FORMATTEDNUM]", "{0}");
+                    string JpString = ""; //coroutine.Current.ToString().Replace("<color = ", "<color=").Replace("</ color>", "</color>").Replace("[SHARP] ", "#").Replace("[SHARP]", "#").Replace("<size = ", "<size=").Replace("</ size>", "</size>");//.Replace(" [FORMATTEDNUM] ", "{0}").Replace("[FORMATTEDNUM]", "{0}");
                     //LogManager.Logger.LogInfo($"{keyValuePair.Key}\t{JpString}\t\t\tnew\t\t{ENUSStringReplaced}\t\t\r\n");
                     tsvText.Append($"{keyValuePair.Key}\t{JpString}\t\tnew\t{ENUSStringReplaced}\t\r\n");
                 }
+                else {
+                    Main.JPDictionary[keyValuePair.Key] = Main.JPDictionary[keyValuePair.Key].Replace(" ", "\u00a0");
+
+
+
+                }
+
 
             }
 

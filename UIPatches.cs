@@ -39,16 +39,136 @@ namespace DSPJapanesePlugin
 
         public static bool BeltCheckSignUpdated = false;
 
-        //建築メニューの[☑コンベアベルト]の位置調整
-        [HarmonyPrefix, HarmonyPatch(typeof(UIBuildMenu), "UpdateUXPanel")]
-        public static void PrUIBuildMenu_UpdateUXPanels_PrePatchefix(Image ___uxBeltCheckSign, UIButton ___uxBeltCheck)
+        //性能強化ツリーの現在の性能ウインドウのラベルの調整 Version  0.10.28.21308
+        //[HarmonyPrefix, HarmonyPatch(typeof(UITechTree), "_OnInit")]
+        //public static void UITechTree_OnInit_Prefix(UITechTree __instance)
+        //{
+
+        //    __instance.groupStat1_1.GetComponent<Text>().fontSize = 20;
+        //    __instance.groupStat2_2.GetComponent<Text>().fontSize = 20;
+        //    __instance.groupStat3_3.GetComponent<Text>().fontSize = 20;
+        //    __instance.dataValue1_3.GetComponent<Text>().fontSize = 20;
+        //    __instance.dataValue2_6.GetComponent<Text>().fontSize = 20;
+        //    __instance.dataValue3_3.GetComponent<Text>().fontSize = 20;
+        //}
+
+
+        //ロード画面の「サンドボックスツールを有効にする」の場所を調整改　0.10.28.21247
+        [HarmonyPostfix, HarmonyPatch(typeof(UILoadGameWindow), "_OnOpen")]
+        public static void UILoadGameWindow_OnOpen_Patch(UILoadGameWindow __instance)
         {
-            if (!BeltCheckSignUpdated)
-            {
-                ___uxBeltCheck.transform.Translate(-0.4f, 0, 0);
-                BeltCheckSignUpdated = true;
-            }
+            LogManager.Logger.LogInfo("UILoadGameWindow_OnOpen_Patch");
+            __instance.loadSandboxGroup.transform.localPosition = new Vector3(__instance.loadButton.gameObject.transform.localPosition.x - 250, __instance.loadSandboxGroup.transform.localPosition.y, 0f);
         }
+
+        //マイルストーンの説明文UIVariousPopupCardで、惑星名のスペースで改行されてしまう問題の解消 Version  0.10.28.21247
+        [HarmonyPostfix, HarmonyPatch(typeof(UIVariousPopupCard), "Refresh")]
+        public static void UIVariousPopupCard_Refresh_PostPatch(UIVariousPopupCard __instance)
+        {
+
+            if (__instance.descText.text.Contains(" "))
+            {
+                __instance.descText.text = __instance.descText.text.Replace(" ", "\u00a0");
+
+            }
+            if (__instance.descText.text.Contains("_"))
+            {
+                __instance.descText.text = __instance.descText.text.Replace("_", " ");
+            }
+
+        }
+
+
+        //ダークフォグ情報？画面の調整 Version  0.10.28.21172
+        [HarmonyPrefix, HarmonyPatch(typeof(UIEnemyBriefInfo), "_OnInit")]
+        public static void UIEnemyBriefInfo_OnInit_Prefix(UIEnemyBriefInfo __instance)
+        {
+            GameObject valueTexts = __instance.transform.Find("brief-info-top/brief-info/content/values-text").gameObject;
+            valueTexts.transform.localPosition = new Vector3(-110f, valueTexts.transform.localPosition.y, valueTexts.transform.localPosition.z);
+        }
+        
+        //ピックアップフィルター画面の調整 Version  0.10.28.21172
+        //[HarmonyPrefix, HarmonyPatch(typeof(UILootFilter), "_OnInit")]
+        //public static void UILootFilter_OnInit_Prefix(UILootFilter __instance)
+        //{
+        //    __instance.transform.Find("drop-all-button/button-text").transform.localScale = new Vector3(0.8f, 1f, 1f);
+        //    __instance.transform.Find("drop-all-button/button-text").GetComponent<RectTransform>().sizeDelta = new Vector2(20f, 0f);
+        //}
+
+        //死亡画面のメニューの調整 Version  0.10.28.21172
+        [HarmonyPrefix, HarmonyPatch(typeof(UIDeathPanel), "_OnInit")]
+        public static void UIDeathPanel_OnInit_Prefix(UIDeathPanel __instance)
+        {
+            __instance.transform.Find("bg-trans/sandbox/Text").transform.localScale = new Vector3(0.9f, 1f, 1f);
+        }
+
+        //アセンブラーウインドウ等の増産剤のメニューの調整 Version  0.10.28.21172
+        [HarmonyPrefix, HarmonyPatch(typeof(UIAssemblerWindow), "_OnInit")]
+        public static void UIAssemblerWindow_OnInit_Prefix(UIAssemblerWindow __instance)
+        {
+            __instance.transform.Find("produce/inc-info/inc-effect-type-text").transform.localScale = new Vector3(0.85f, 1f, 1f);
+        }
+        [HarmonyPrefix, HarmonyPatch(typeof(UILabWindow), "_OnInit")]
+        public static void UILabWindow_OnInit_Prefix(UILabWindow __instance)
+        {
+            __instance.transform.Find("matrix-group/inc-info/inc-effect-type-text").transform.localScale = new Vector3(0.85f, 1f, 1f);
+        }
+
+        //Zメニューの調整 Version  0.10.28.21172
+        [HarmonyPrefix, HarmonyPatch(typeof(UIZScreen), "_OnInit")]
+        public static void UIZScreen_OnInit_Prefix(UIZScreen __instance)
+        {
+            __instance.transform.Find("fleet-group/fleet-panel/fleet-entries/fleet-g-entry/enable-fleet-button/fleet-title").transform.localScale = new Vector3(0.9f, 1f, 1f);
+            __instance.transform.Find("fleet-group/fleet-panel/fleet-entries/fleet-s-entry/enable-fleet-button/fleet-title").transform.localScale = new Vector3(0.9f, 1f, 1f);
+        }
+        [HarmonyPrefix, HarmonyPatch(typeof(UIZS_FleetEntry), "_OnInit")]
+        public static void UIZS_FleetEntry_OnInit_Prefix(UIZS_FleetEntry __instance)
+        {
+            __instance.commandButton.tips.width = 330;
+        }
+        [HarmonyPrefix, HarmonyPatch(typeof(UIZS_FleetPanel), "_OnInit")]
+        public static void UIZS_FleetPanel_OnInit_Prefix(UIZS_FleetPanel __instance)
+        {
+            __instance.allCommandButton.tips.width = 370;
+        }
+
+
+        //メカパネルの調整 Version  0.10.28.21172
+        [HarmonyPostfix, HarmonyPatch(typeof(UIMechaWindow), "_OnInit")]
+        public static void UIMechaWindow_OnInit_Patch(UIMechaWindow __instance)
+        {
+            __instance.transform.Find("fleet-group/fleet-s-entry/corner-mark").transform.localScale = new Vector3(-0.75f, 0.39f, 1f);
+            __instance.transform.Find("fleet-group/fleet-g-entry/corner-mark").transform.localScale = new Vector3(-0.75f, 0.39f, 1f);
+            __instance.transform.Find("information/duration-panel/appearance-btn/label").transform.localScale = new Vector3(1f, 0.8f, 1f);
+        }
+
+        //パフォーマンスモニターのフォントの変更 Version  0.10.28.21014
+        [HarmonyPostfix, HarmonyPatch(typeof(UIAchievementEntry), "_OnInit")]
+        public static void UIAchievementEntry_OnInit_Patch(UIAchievementEntry __instance)
+        {
+            __instance.propertyTip.GetComponent<RectTransform>().sizeDelta = new Vector2(20f, -84f);
+            __instance.propertyTip.transform.Find("bg").GetComponent<RectTransform>().sizeDelta = new Vector2(240f, 26f);
+            __instance.propertyTip.transform.localScale = new Vector3(0.9f, 1f, 1f);
+        }
+
+        //実績パネルの表示調整 Version  0.10.28.21014
+        [HarmonyPostfix, HarmonyPatch(typeof(UIPerformancePanel), "_OnOpen")]
+        public static void UIPerformancePanel_OnOpen_Patch(UIPerformancePanel __instance)
+        {
+            __instance.cpuLabelText.font = Main.newFont;
+            __instance.gpuLabelText.font = Main.newFont;
+            __instance.dataLabelText.font = Main.newFont;
+        }
+
+        //ダークフォグモニターの基地情報の修正 Version  0.10.28.21014
+        [HarmonyPostfix, HarmonyPatch(typeof(UIDarkFogMonitorEntry), "_OnInit")]
+        public static void UIDarkFogMonitorEntry_OnInit_Patch(UIDarkFogMonitorEntry __instance)
+        {
+            GameObject threatValueText = __instance.threatValueText.gameObject;
+            threatValueText.transform.localScale = new Vector3(0.8f, 1f, 1f);
+            threatValueText.GetComponent<RectTransform>().sizeDelta = new Vector2(140f, 20f);
+        }
+
 
         //戦場分析基地ウインドウの修正 Version 0.10.28.20856
         [HarmonyPostfix, HarmonyPatch(typeof(UIBattleBaseWindow), "_OnCreate")]
@@ -85,27 +205,21 @@ namespace DSPJapanesePlugin
             Text.transform.localPosition = new Vector3(-18f, -7f, 0f); //-15 -7 0
         }
 
-        //ロード画面の「サンドボックスツールを有効にする」の場所を調整　0.9.26.12891
-        [HarmonyPostfix, HarmonyPatch(typeof(UILoadGameWindow), "_OnOpen")]
-        public static void UILoadGameWindow_OnOpen_Patch(UILoadGameWindow __instance)
+
+        //サンドボックスツールの表示を調整
+        [HarmonyPostfix, HarmonyPatch(typeof(UISandboxMenu), "_OnInit")]
+        public static void UISandboxMenu_OnInit_Patch()
         {
-            LogManager.Logger.LogInfo("UILoadGameWindow_OnOpen_Patch");
-
-            __instance.loadSandboxGroup.transform.localPosition = new Vector3(450f, __instance.loadSandboxGroup.transform.localPosition.y, 0f);
-
-
+            //[6]サンドボックスツールの説明の調整　0.9.26.12891
+            GameObject tip = GameObject.Find("UI Root/Overlay Canvas/In Game/Function Panel/Sandbox Menu/general-group/tools-group/fast-build-batch-size/tip").gameObject;
+            tip.GetComponent<Text>().alignment = TextAnchor.UpperRight;
+            tip.transform.localPosition = new Vector3(tip.transform.localPosition.x, -25f, 0f);
+            //サンドボックスツールのタイトルの拡大  0.10.28.21172
+            GameObject title = GameObject.Find("UI Root/Overlay Canvas/In Game/Function Panel/bg-trans/sandbox-btn/title").gameObject;
+            title.GetComponent<Text>().lineSpacing = 0.6f;
+            title.GetComponent<RectTransform>().sizeDelta = new Vector2(80f, 40f);
+            //title.GetComponent<Text>().text = "サンドボックス\nツール";
         }
-
-
-
-        ////サンドボックスツールの表示を調整　0.9.26.12891
-        //[HarmonyPostfix, HarmonyPatch(typeof(UISandboxMenu), "_OnOpen")]
-        //public static void UISandboxMenu_OnOpen_Patch()
-        //{
-        //    GameObject tip = GameObject.Find("UI Root/Overlay Canvas/In Game/Function Panel/Sandbox Menu/general-group/tools-group/fast-build-batch-size/tip").gameObject;
-        //    tip.GetComponent<Text>().alignment = TextAnchor.UpperRight;
-        //    tip.transform.localPosition = new Vector3(tip.transform.localPosition.x, -25f, 0f);
-        //}
 
         //合成機ウインドウの無料アイテム関係の表示を調整　0.9.26.12891
         [HarmonyPostfix, HarmonyPatch(typeof(UIReplicatorWindow), "_OnOpen")]
@@ -151,9 +265,7 @@ namespace DSPJapanesePlugin
         public static void UILoadGameWindowt__OnCreate(UILoadGameWindow __instance)
         {
             //LogManager.Logger.LogInfo("ロード画面の画像でメタ寄与数が表示されない問題の修正");
-
             __instance.propertyItemPrefab.countText.GetComponent<RectTransform>().sizeDelta = new Vector2(60f, 20f);
-
         }
 
 
@@ -169,7 +281,7 @@ namespace DSPJapanesePlugin
 
 
 
-        //    //アイテムチップの増産剤効果表示の調整
+        //    //アイテムチップの増産剤効果表示の調整 不要
         //    //[HarmonyPostfix, HarmonyPatch(typeof(UIItemTip), "SetTip")]
         //    public static void UIItemTip_SetTip_PostPatch(UIItemTip __instance)
         //    {
@@ -302,31 +414,32 @@ namespace DSPJapanesePlugin
 
 
 
-        //組み立て機等のアラームボタンの調整
-        [HarmonyPatch]
-        public static class alarmSwitchButton_Patch
-        {
-            [HarmonyTargetMethods]
-            static IEnumerable<MethodBase> TargetMethods()
-            {
-                yield return AccessTools.Method(typeof(UIAssemblerWindow), "_OnInit");
-                yield return AccessTools.Method(typeof(UIMinerWindow), "_OnInit");
-                yield return AccessTools.Method(typeof(UIPowerGeneratorWindow), "_OnInit");
-                yield return AccessTools.Method(typeof(UISiloWindow), "_OnInit");
-                yield return AccessTools.Method(typeof(UILabWindow), "_OnInit");
-                yield return AccessTools.Method(typeof(UIVeinCollectorPanel), "_OnInit");
-                yield return AccessTools.Method(typeof(UITurretWindow), "_OnInit");
-            }
-            [HarmonyPostfix]
-            public static void Postfix(ref UIButton ___alarmSwitchButton)
-            {
-                if (Main.EnableFixUI.Value)
-                {
-                    ___alarmSwitchButton.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 22);
-                    ___alarmSwitchButton.transform.Find("alarm-state-text").transform.localPosition = new Vector3(44, 9, 0);
-                }
-            }
-        }
+        ////組み立て機等のアラームボタンの調整
+        //[HarmonyPatch]
+        //public static class alarmSwitchButton_Patch
+        //{
+        //    [HarmonyTargetMethods]
+        //    static IEnumerable<MethodBase> TargetMethods()
+        //    {
+        //        yield return AccessTools.Method(typeof(UIAssemblerWindow), "_OnInit");
+        //        yield return AccessTools.Method(typeof(UIMinerWindow), "_OnInit");
+        //        yield return AccessTools.Method(typeof(UIPowerGeneratorWindow), "_OnInit");
+        //        yield return AccessTools.Method(typeof(UISiloWindow), "_OnInit");
+        //        yield return AccessTools.Method(typeof(UILabWindow), "_OnInit");
+        //        yield return AccessTools.Method(typeof(UIVeinCollectorPanel), "_OnInit");
+        //        yield return AccessTools.Method(typeof(UITurretWindow), "_OnInit");
+        //        yield return AccessTools.Method(typeof(UIFieldGeneratorWindow), "_OnInit");
+        //    }
+        //    [HarmonyPostfix]
+        //    public static void Postfix(ref UIButton ___alarmSwitchButton)
+        //    {
+        //        if (Main.EnableFixUI.Value)
+        //        {
+        //            ___alarmSwitchButton.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 22);
+        //            ___alarmSwitchButton.transform.Find("alarm-state-text").transform.localPosition = new Vector3(44, 9, 0);
+        //        }
+        //    }
+        //}
 
         //マイルストーンの説明文で、惑星名のスペースで改行されてしまう問題の解消
         [HarmonyPostfix, HarmonyPatch(typeof(UIMilestoneTip), "SetMilestoneTip")]
@@ -499,36 +612,47 @@ namespace DSPJapanesePlugin
                     starSet.transform.Find("Image").transform.localPosition = new Vector3(-212f, -16f, 0);
                 }
 
+        //建築メニューの[☑コンベアベルト]の位置調整
+        [HarmonyPrefix, HarmonyPatch(typeof(UIBuildMenu), "UpdateUXPanel")]
+        public static void PrUIBuildMenu_UpdateUXPanels_PrePatchefix(Image ___uxBeltCheckSign, UIButton ___uxBeltCheck)
+        {
+            if (!BeltCheckSignUpdated)
+            {
+                ___uxBeltCheck.transform.Translate(-0.4f, 0, 0);
+                BeltCheckSignUpdated = true;
+            }
+        }
+
 
         //    //UIAssemblerWindowのフック：コピー＆ペーストボタンのサイズ拡大
-    //    [HarmonyPostfix, HarmonyPatch(typeof(UIAssemblerWindow), "_OnOpen")]
-    //    //static void UIAssemblerWindow_OnOpen_Patch(UIButton ___resetButton, UIButton ___copyButton, UIButton ___pasteButton)
-    //    //{
-    //    //    if (Main.EnableFixUI.Value)
-    //    //    {
+        //    [HarmonyPostfix, HarmonyPatch(typeof(UIAssemblerWindow), "_OnOpen")]
+        //    //static void UIAssemblerWindow_OnOpen_Patch(UIButton ___resetButton, UIButton ___copyButton, UIButton ___pasteButton)
+        //    //{
+        //    //    if (Main.EnableFixUI.Value)
+        //    //    {
 
-    //    //        //LogManager.Logger.LogInfo("copyButton");
-    //    //        Text copyText = ___copyButton.GetComponent<Text>();
-    //    //        if (copyText != null)
-    //    //        {
-    //    //            float width = copyText.preferredWidth;
-    //    //            float height = copyText.preferredHeight;
+        //    //        //LogManager.Logger.LogInfo("copyButton");
+        //    //        Text copyText = ___copyButton.GetComponent<Text>();
+        //    //        if (copyText != null)
+        //    //        {
+        //    //            float width = copyText.preferredWidth;
+        //    //            float height = copyText.preferredHeight;
 
-    //    //            RectTransform trs = (RectTransform)___copyButton.button.transform;
+        //    //            RectTransform trs = (RectTransform)___copyButton.button.transform;
 
-    //    //            trs.offsetMin = new Vector2(-35, trs.offsetMin.y);
-    //    //            trs.offsetMax = new Vector2(35, trs.offsetMax.y);
-    //    //        }
-    //    //        // LogManager.Logger.LogInfo("pasteButton");
-    //    //        Text pasteText = ___pasteButton.GetComponent<Text>();
-    //    //        if (pasteText != null)
-    //    //        {
-    //    //            RectTransform trs = (RectTransform)___pasteButton.button.transform;
-    //    //            trs.offsetMin = new Vector2(10, trs.offsetMin.y);
-    //    //            trs.offsetMax = new Vector2(80, trs.offsetMax.y);
-    //    //        }
-    //    //    }
-    //    //}
+        //    //            trs.offsetMin = new Vector2(-35, trs.offsetMin.y);
+        //    //            trs.offsetMax = new Vector2(35, trs.offsetMax.y);
+        //    //        }
+        //    //        // LogManager.Logger.LogInfo("pasteButton");
+        //    //        Text pasteText = ___pasteButton.GetComponent<Text>();
+        //    //        if (pasteText != null)
+        //    //        {
+        //    //            RectTransform trs = (RectTransform)___pasteButton.button.transform;
+        //    //            trs.offsetMin = new Vector2(10, trs.offsetMin.y);
+        //    //            trs.offsetMax = new Vector2(80, trs.offsetMax.y);
+        //    //        }
+        //    //    }
+        //    //}
 
     }
 }

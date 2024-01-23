@@ -1,6 +1,6 @@
 {
     "name": "DSPJapanesePlugin",
-    "version_number": "1.2.2",
+    "version_number": "1.2.5",
     "website_url": "https://github.com/appuns/DSPJapanesePlugin",
     "description": "ダイソンスフィアプログラムを日本語化し、フォントも変更します。This change all strings to Japanese and change fonts.",
     "dependencies": ["xiaoye97-BepInEx-5.4.17"]
