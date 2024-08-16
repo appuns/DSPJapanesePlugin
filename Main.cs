@@ -30,7 +30,7 @@ using System.Security.Permissions;
 
 namespace DSPJapanesePlugin
 {
-    [BepInPlugin("Appun.DSP.plugin.JapanesePlugin", "DSPJapanesePlugin", "1.2.5")]
+    [BepInPlugin("Appun.DSP.plugin.JapanesePlugin", "DSPJapanesePlugin", "1.2.9")]
 
     public class Main : BaseUnityPlugin
     {

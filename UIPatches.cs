@@ -39,19 +39,217 @@ namespace DSPJapanesePlugin
 
         public static bool BeltCheckSignUpdated = false;
 
+        //物流ステーションコントロールパネルのUI調整 Version  0.10.30.23292
+        [HarmonyPostfix, HarmonyPatch(typeof(UIControlPanelStationRouteViewPanel), "_OnCreate")]
+        public static void UIControlPanelStationRouteViewPanel_UpdataBanner_Postfix(UIControlPanelStationRouteViewPanel __instance)
+        {
+            __instance.s2sRouteAmountText.gameObject.transform.localPosition = new Vector3(190f, -15f, 0f);
+            __instance.a2aRouteAmountText.gameObject.transform.localPosition = new Vector3(190f, -15f, 0f);
+            __instance.groupRouteAmountText.gameObject.transform.localPosition = new Vector3(190f, -15f, 0f);
+            __instance.normalRouteAmountText.gameObject.transform.localPosition = new Vector3(190f, -15f, 0f);
+        }
+
+        //物流ステーションのUI調整 Version  0.10.30.22292 & 0.10.30.23292
+        [HarmonyPrefix, HarmonyPatch(typeof(UIStationWindow), "_OnCreate")]
+        public static void UIStationWindow_OnCreate_Prefix(UIStationWindow __instance)
+        {
+            __instance.transform.Find("panel-down/route-settings/set/p2p-setting/title/tip").gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(180, 20);
+            __instance.transform.Find("panel-down/control-panel-button/label").gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(150, 30);
+            __instance.transform.Find("panel-down/control-panel-button/bg").gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(175, 32);
+        }
+
+
         //性能強化ツリーの現在の性能ウインドウのラベルの調整 Version  0.10.28.21308
-        //[HarmonyPrefix, HarmonyPatch(typeof(UITechTree), "_OnInit")]
-        //public static void UITechTree_OnInit_Prefix(UITechTree __instance)
-        //{
+        [HarmonyPrefix, HarmonyPatch(typeof(UITechTree), "_OnCreate")]
+        public static void UITechTree_OnCreate_Prefix(UITechTree __instance)
+        {
+            //tab1
+            __instance.transform.Find("info-panel/label/mining-group-normal/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label/mining-group-combat/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label/explore-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label/distributor-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label/drone-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label/ship-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label/vertical-build-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label/dyson-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label/other-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            //tab2
+            __instance.transform.Find("info-panel/label-2/mecha-mobility-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label-2/mecha-core-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label-2/mecha-storage-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label-2/mecha-drone-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label-2/mecha-shield-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label-2/mecha-durability-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label-2/mecha-assemble-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            //tab3
+            __instance.transform.Find("info-panel/label-3/damage-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label-3/combat-drone-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label-3/combat-ship-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label-3/fleet-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label-3/global-durability-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
+            __instance.transform.Find("info-panel/label-3/shield-group/details/lable").gameObject.GetComponent<Text>().fontSize = 13;
 
-        //    __instance.groupStat1_1.GetComponent<Text>().fontSize = 20;
-        //    __instance.groupStat2_2.GetComponent<Text>().fontSize = 20;
-        //    __instance.groupStat3_3.GetComponent<Text>().fontSize = 20;
-        //    __instance.dataValue1_3.GetComponent<Text>().fontSize = 20;
-        //    __instance.dataValue2_6.GetComponent<Text>().fontSize = 20;
-        //    __instance.dataValue3_3.GetComponent<Text>().fontSize = 20;
-        //}
+            __instance.dataValue1_1.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue1_1.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue1_1.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue1_1.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue1_2.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue1_2.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue1_2.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue1_2.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue1_3.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue1_3.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue1_3.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue1_3.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue1_4.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue1_4.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue1_4.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue1_4.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue1_5.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue1_5.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue1_5.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue1_5.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue1_6.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue1_6.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue1_6.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue1_6.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue1_7.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue1_7.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue1_7.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue1_7.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue1_8.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue1_8.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue1_8.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue1_8.transform.localPosition = new Vector3(0f, 2f, 0f);
 
+            __instance.dataValue2_1.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue2_1.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue2_1.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue2_1.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue2_2.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue2_2.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue2_2.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue2_2.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue2_3.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue2_3.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue2_3.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue2_3.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue2_4.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue2_4.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue2_4.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue2_4.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue2_5.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue2_5.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue2_5.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue2_5.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue2_6.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue2_6.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue2_6.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue2_6.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue2_7.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue2_7.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue2_7.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue2_7.transform.localPosition = new Vector3(0f, 2f, 0f);
+
+            __instance.dataValue3_1.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue3_1.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue3_1.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue3_1.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue3_2.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue3_2.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue3_2.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue3_2.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue3_3.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue3_3.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue3_3.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue3_3.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue3_4.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue3_4.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue3_4.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue3_4.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue3_5.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue3_5.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue3_5.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue3_5.transform.localPosition = new Vector3(0f, 2f, 0f);
+            __instance.dataValue3_6.GetComponent<Text>().fontSize = 13;
+            __instance.dataValue3_6.GetComponent<Text>().font = Main.newFont;
+            __instance.dataValue3_6.GetComponent<Text>().lineSpacing = 1;
+            __instance.dataValue3_6.transform.localPosition = new Vector3(0f, 2f, 0f);
+
+            //__instance.groupStat2_2.GetComponent<Text>().fontSize = 20;
+            //__instance.groupStat3_3.GetComponent<Text>().fontSize = 20;
+            //__instance.dataValue1_3.GetComponent<Text>().fontSize = 20;
+            //__instance.dataValue2_6.GetComponent<Text>().fontSize = 20;
+            //__instance.dataValue3_3.GetComponent<Text>().fontSize = 20;
+
+
+        }
+
+
+        //実績パネルの表示調整ver2 Version  0.10.28.21308
+        [HarmonyPostfix, HarmonyPatch(typeof(UIPerformancePanel), "_OnOpen")]
+        public static void UIPerformancePanel_OnOpen_Postfix(UIPerformancePanel __instance)
+        {
+            __instance.cpuLabelText.font = Main.newFont;
+            __instance.cpuValueText1.font = Main.newFont;
+            __instance.cpuValueText2.font = Main.newFont;
+            __instance.gpuLabelText.font = Main.newFont;
+            __instance.gpuValueText1.font = Main.newFont;
+            __instance.gpuValueText2.font = Main.newFont;
+            __instance.dataLabelText.font = Main.newFont;
+            __instance.dataValueText1.font = Main.newFont;
+            __instance.dataValueText2.font = Main.newFont;
+        }
+
+        //SailIndicatorの日本語化ver2 Version  0.10.28.21308
+        [HarmonyPostfix, HarmonyPatch(typeof(UISailIndicator), "_OnInit")]
+        public static void UISailIndicator_OnInit_Postfix(UISailIndicator __instance)
+        {
+            if (Main.EnableFixUI.Value)
+            {
+                GameObject SailIndicator = GameObject.Find("UI Root/Auxes/Sail Indicator/group");
+                SailIndicator.transform.Find("labels").GetComponent<TextMesh>().text = "\n\n\n\n\n到着まで\n偏角\n方位角                                   仰俯角";
+                SailIndicator.transform.Find("labels").GetComponent<TextMesh>().transform.localScale = new Vector3(0.6f, 1, 1);
+                //SailIndicator.transform.Find("dist").transform.position = new Vector3(0.71f, -0.565f, 0);
+                //SailIndicator.transform.Find("eta").transform.position = new Vector3(1.1f, -1.723f, 0);
+                //SailIndicator.transform.Find("bias").transform.position = new Vector3(1.1f, -2.067f, 0);
+                //SailIndicator.transform.Find("yaw").transform.position = new Vector3(1.1f, -2.411f, 0);
+                //SailIndicator.transform.Find("yaw-sign").transform.position = new Vector3(1f, -2.44f, 0);
+                //SailIndicator.transform.Find("pitch").transform.position = new Vector3(3.5f, -2.411f, 0);
+                //SailIndicator.transform.Find("pitch-sign").transform.position = new Vector3(3.4f, -2.44f, 0);
+            }
+        }
+
+
+        //統計パネルの戦闘タブの翻訳 LBDtoolの問題
+        [HarmonyPostfix, HarmonyPatch(typeof(UIKillEntry), "_OnUpdate")]
+        public static void UIKillEntry_OnUpdate_Postfix(UIKillEntry __instance)
+        {
+            if (Main.EnableFixUI.Value)
+            {
+                ModelProto modelProto = LDB.models.Select(__instance.entryData.modelId);
+                __instance.itemName.text = modelProto.displayName.Translate();
+            }
+        }
+
+        //ブループリントブック保存画面のUI修正 　0.10.29.21950
+        [HarmonyPostfix, HarmonyPatch(typeof(UIBlueprintBookInspector), "_OnCreate")]
+        public static void UIBlueprintBookInspector_OnCreate_Postfix(UIBlueprintBookInspector __instance)
+        {
+            if (Main.EnableFixUI.Value)
+            {
+                __instance.deleteButton.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 30);
+            }
+        }
+
+
+        //タレットウインドウの「スーパーノヴァ」の調整　0.10.29.21950
+        [HarmonyPostfix, HarmonyPatch(typeof(UITurretWindow), "_OnCreate")]
+        public static void UITurretWindow_OnUpdate_Postfix(UITurretWindow __instance)
+        {
+            __instance.supernovaBtnText.GetComponent<Text>().lineSpacing = 0.7f;
+            __instance.supernovaBtnText.GetComponent<Text>().fontSize = 16;
+        }
 
         //ロード画面の「サンドボックスツールを有効にする」の場所を調整改　0.10.28.21247
         [HarmonyPostfix, HarmonyPatch(typeof(UILoadGameWindow), "_OnOpen")]
@@ -151,14 +349,6 @@ namespace DSPJapanesePlugin
             __instance.propertyTip.transform.localScale = new Vector3(0.9f, 1f, 1f);
         }
 
-        //実績パネルの表示調整 Version  0.10.28.21014
-        [HarmonyPostfix, HarmonyPatch(typeof(UIPerformancePanel), "_OnOpen")]
-        public static void UIPerformancePanel_OnOpen_Patch(UIPerformancePanel __instance)
-        {
-            __instance.cpuLabelText.font = Main.newFont;
-            __instance.gpuLabelText.font = Main.newFont;
-            __instance.dataLabelText.font = Main.newFont;
-        }
 
         //ダークフォグモニターの基地情報の修正 Version  0.10.28.21014
         [HarmonyPostfix, HarmonyPatch(typeof(UIDarkFogMonitorEntry), "_OnInit")]
@@ -177,33 +367,33 @@ namespace DSPJapanesePlugin
             GameObject droneTitle = __instance.transform.Find("module-group/drone/drone-title").gameObject;
             droneTitle.GetComponent<RectTransform>().sizeDelta = new Vector2(80f, 20f);
         }
-        
-        //タレットウインドウの修正 Version 0.10.28.20856
-        [HarmonyPostfix, HarmonyPatch(typeof(UITurretWindow), "_OnCreate")]
-        public static void UITurretWindow_OnCreate_Patch(UITurretWindow __instance)
-        {
-            __instance.activeGroupBtn.gameObject.transform.localScale = new Vector3(0.8f, 1, 1);
-            GameObject currentRof = __instance.transform.Find("supernova-desc/effect-desc/current-rof").gameObject;
-            currentRof.transform.localScale = new Vector3(0.8f, 1f, 1f);
-            GameObject currentPower = __instance.transform.Find("supernova-desc/effect-desc/current-power").gameObject;
-            currentPower.transform.localScale = new Vector3(0.8f, 1f, 1f);
-            GameObject burstPower = __instance.transform.Find("supernova-desc/effect-desc/burst-power").gameObject;
-            burstPower.transform.localScale = new Vector3(0.6f, 1f, 1f);
 
-            //GameObject select1Btn = __instance.select1Btn.gameObject;
-            GameObject select1Btn = __instance.transform.Find("supernova-desc/switch-button-1").gameObject;
-            select1Btn.transform.localPosition = new Vector3(-56f, -24f, 0f); //-56 -24 0
-            select1Btn.GetComponent<RectTransform>().sizeDelta = new Vector2(130f, 24f); //107 24
-            GameObject select2Btn = __instance.transform.Find("supernova-desc/switch-button-2").gameObject;
-            select2Btn.transform.localPosition = new Vector3(-56f, -48f, 0f); //-56 -48 0
-            select2Btn.GetComponent<RectTransform>().sizeDelta = new Vector2(130f, 24f); //107 24
-            GameObject select3Btn = __instance.transform.Find("supernova-desc/switch-button-3").gameObject;
-            select3Btn.transform.localPosition = new Vector3(-56f, -72f, 0f); //-56 -72 0
-            select3Btn.GetComponent<RectTransform>().sizeDelta = new Vector2(130f, 24f); //107 24
+        //タレットウインドウの修正 Version 0.10.28.20856  →　不要
+        //[HarmonyPostfix, HarmonyPatch(typeof(UITurretWindow), "_OnCreate")]
+        //public static void UITurretWindow_OnCreate_Patch(UITurretWindow __instance)
+        //{
+        //    __instance.activeGroupBtn.gameObject.transform.localScale = new Vector3(0.8f, 1, 1);
+        //    GameObject currentRof = __instance.transform.Find("supernova-desc/effect-desc/current-rof").gameObject;
+        //    currentRof.transform.localScale = new Vector3(0.8f, 1f, 1f);
+        //    GameObject currentPower = __instance.transform.Find("supernova-desc/effect-desc/current-power").gameObject;
+        //    currentPower.transform.localScale = new Vector3(0.8f, 1f, 1f);
+        //    GameObject burstPower = __instance.transform.Find("supernova-desc/effect-desc/burst-power").gameObject;
+        //    burstPower.transform.localScale = new Vector3(0.6f, 1f, 1f);
 
-            GameObject Text = __instance.transform.Find("ammo-desc/group-selection/group/Text").gameObject;
-            Text.transform.localPosition = new Vector3(-18f, -7f, 0f); //-15 -7 0
-        }
+        //    //GameObject select1Btn = __instance.select1Btn.gameObject;
+        //    GameObject select1Btn = __instance.transform.Find("supernova-desc/switch-button-1").gameObject;
+        //    select1Btn.transform.localPosition = new Vector3(-56f, -24f, 0f); //-56 -24 0
+        //    select1Btn.GetComponent<RectTransform>().sizeDelta = new Vector2(130f, 24f); //107 24
+        //    GameObject select2Btn = __instance.transform.Find("supernova-desc/switch-button-2").gameObject;
+        //    select2Btn.transform.localPosition = new Vector3(-56f, -48f, 0f); //-56 -48 0
+        //    select2Btn.GetComponent<RectTransform>().sizeDelta = new Vector2(130f, 24f); //107 24
+        //    GameObject select3Btn = __instance.transform.Find("supernova-desc/switch-button-3").gameObject;
+        //    select3Btn.transform.localPosition = new Vector3(-56f, -72f, 0f); //-56 -72 0
+        //    select3Btn.GetComponent<RectTransform>().sizeDelta = new Vector2(130f, 24f); //107 24
+
+        //    GameObject Text = __instance.transform.Find("ammo-desc/group-selection/group/Text").gameObject;
+        //    Text.transform.localPosition = new Vector3(-18f, -7f, 0f); //-15 -7 0
+        //}
 
 
         //サンドボックスツールの表示を調整
@@ -458,24 +648,6 @@ namespace DSPJapanesePlugin
 
         }
 
-        //SailIndicatorの日本語化
-        [HarmonyPostfix, HarmonyPatch(typeof(UISailIndicator), "_OnInit")]
-        public static void UISailIndicator_OnInit_PostPatch(UISailIndicator __instance)
-        {
-            if (Main.EnableFixUI.Value)
-            {
-                GameObject SailIndicator = GameObject.Find("UI Root/Auxes/Sail Indicator/group");
-                SailIndicator.transform.Find("labels").GetComponent<TextMesh>().text = "\n\n\n\n\n到着まで\n偏角\n方位角                                   仰俯角";
-                SailIndicator.transform.Find("labels").GetComponent<TextMesh>().transform.localScale = new Vector3(0.7f, 1, 1);
-                SailIndicator.transform.Find("dist").transform.position = new Vector3(0.71f, -0.565f, 0);
-                SailIndicator.transform.Find("eta").transform.position = new Vector3(1.1f, -1.723f, 0);
-                SailIndicator.transform.Find("bias").transform.position = new Vector3(1.1f, -2.067f, 0);
-                SailIndicator.transform.Find("yaw").transform.position = new Vector3(1.1f, -2.411f, 0);
-                SailIndicator.transform.Find("yaw-sign").transform.position = new Vector3(1f, -2.44f, 0);
-                SailIndicator.transform.Find("pitch").transform.position = new Vector3(3.5f, -2.411f, 0);
-                SailIndicator.transform.Find("pitch-sign").transform.position = new Vector3(3.4f, -2.44f, 0);
-            }
-        }
         //ブループリント保存画面のUI修正１
         //[HarmonyPostfix, HarmonyPatch(typeof(UIBlueprintBrowser), "_OnCreate")]
         //public static void UIBlueprintBrowser_OnOpen_Harmony(UIBlueprintBrowser __instance)
@@ -624,7 +796,7 @@ namespace DSPJapanesePlugin
         }
 
 
-        //    //UIAssemblerWindowのフック：コピー＆ペーストボタンのサイズ拡大
+        //    //UIAssemblerWindowのフック：コピー＆ペーストボタンのサイズ拡大  →　不要
         //    [HarmonyPostfix, HarmonyPatch(typeof(UIAssemblerWindow), "_OnOpen")]
         //    //static void UIAssemblerWindow_OnOpen_Patch(UIButton ___resetButton, UIButton ___copyButton, UIButton ___pasteButton)
         //    //{

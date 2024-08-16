@@ -274,7 +274,7 @@ namespace DSPJapanesePlugin
 		}
 
 
-		////リソース全体のTextのフォントを変更   //新規文字列のチェック
+		////リソース全体のTextのフォントを変更
 		[HarmonyPostfix, HarmonyPatch(typeof(VFPreload), "PreloadThread")]
         public static void VFPreload_PreloadThread_Patch()
         {
